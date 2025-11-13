@@ -1,4 +1,4 @@
-Purpose of This Module:
+# Purpose of This Module:
 
 This controller performs raw LiDAR-based perception for the robot.
 It extracts structured detection data from LiDAR and prepares it for:
@@ -9,7 +9,7 @@ It extracts structured detection data from LiDAR and prepares it for:
 
 This is the first stage of the perception pipeline.
 
-What This Module Does:
+# What This Module Does:
 
 -Reads LiDAR scan.
 -Converts ranges → polar + Cartesian coordinates (x, y).
@@ -17,7 +17,7 @@ What This Module Does:
 -Sends detection data to the next stage (Kalman Tracker).
 -Performs clustering to group points into objects.
 
-Outputs:
+# Outputs:
 
   double x, y;          // Cartesian position
   double r;             // Distance
@@ -30,4 +30,5 @@ Outputs:
   int age;              // Number of frames tracked
 
 This module does not move the robot — it only senses.
+
 
