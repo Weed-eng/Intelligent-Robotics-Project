@@ -1,4 +1,4 @@
-DWA Local Planner
+# DWA Local Planner
 Implements a standard Dynamic Window Approach planner:
 
 -samples velocity commands
@@ -6,6 +6,7 @@ Implements a standard Dynamic Window Approach planner:
 -evaluates goal, heading, obstacle, and smoothness costs
 -selects the best (v, ω) at each timestep
 
-Run:
+# Run:
 Used internally by main_controller.
+
 
