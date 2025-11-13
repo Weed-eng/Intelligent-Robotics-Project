@@ -1,4 +1,4 @@
-Kalman Prediction Module:
+# Kalman Prediction Module:
 This module takes LiDAR-based detections and maintains Kalman filters for each tracked human/object.
 
 It outputs predicted:
@@ -11,7 +11,8 @@ It outputs predicted:
 
 These predictions are passed to the Adaptive DWA module.
 
-Run:
+# Run:
 Used internally by main_controller.
 No standalone Webots execution required
+
 
