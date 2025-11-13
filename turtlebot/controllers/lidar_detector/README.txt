@@ -17,4 +17,17 @@ What This Module Does:
 -Sends detection data to the next stage (Kalman Tracker).
 -Performs clustering to group points into objects.
 
+Outputs:
+
+  double x, y;          // Cartesian position
+  double r;             // Distance
+  double theta;         // Bearing angle
+  double vx, vy;        // Velocity vector
+  double speed;         // Velocity magnitude
+  double direction;     // Velocity direction angle
+  double radius;        // Cluster spatial size
+  int num_points;       // Points in cluster
+  int age;              // Number of frames tracked
+
 This module does not move the robot — it only senses.
+
