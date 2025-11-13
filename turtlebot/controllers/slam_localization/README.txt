@@ -1,5 +1,4 @@
 # SLAM & Localization Module
-Author: <Team Member Name>
 
 This module performs localization for the robot using:
 - wheel odometry
@@ -26,3 +25,4 @@ This controller is responsible for:
 - maintaining the robot's global pose
 - updating map/occupancy grid (if enabled)
 - providing pose to the navigation stack
+
