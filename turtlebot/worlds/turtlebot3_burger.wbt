@@ -28,12 +28,12 @@ WoodenBox {
   size 0.3 0.3 0.3
 }
 WoodenBox {
-  translation 1.26618 1.07342 0.15
+  translation 2.0 2.0 0.15
   name "wooden box(1)"
   size 0.3 0.3 0.3
 }
 WoodenBox {
-  translation -0.15697 0.782967 0.15
+  translation -2.0 2.0 0.15
   name "wooden box(2)"
   size 0.3 0.3 0.3
 }
@@ -94,7 +94,7 @@ TurtleBot3Burger {
   hidden rotation_10 0.1925718370983256 -0.9812743404261385 -0.004093455486876456 3.472995396560229
   hidden linearVelocity_10 0.04925827952211414 0.008672835074385382 1.3214766991205762e-05
   hidden angularVelocity_10 -2.1682087697834955 12.314569880310186 2.712015837919116e-15
-  translation 0.9702263831939789 0.07017654336825582 -0.0004928204898689142
-  rotation 0.0036218219767066386 -0.3260419177285372 0.9453483750922022 0.028855607880520474
-  controller "turtlebot3_ostacle_avoidance"
+  translation 0 0 0
+  rotation 0 0 1 0
+  controller "main_controller"
 }

@@ -1,0 +1,66 @@
+# Local notes
+pavel_local.md
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+*.pyc
+venv/
+env/
+ENV/
+
+# C/C++
+*.o
+*.exe
+*.out
+*.d
+build/
+release/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Webots
+*.wbproj
+runtime.ini
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs and data
+*.log
+/data/
+logs/
+
+# Temporary files
+*.tmp
+*.bak
+*.backup
