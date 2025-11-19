@@ -1,0 +1,14 @@
+use_sim_time: true
+
+slam_toolbox:
+  ros__parameters:
+    mode: "mapping"
+    map_file_name: "my_map"
+    scan_topic: "/scan"
+    odom_frame: "odom"
+    map_frame: "map"
+    base_frame: "base_link"
+    transform_publish_period: 0.05
+    minimum_time_interval: 0.0
+    max_laser_range: 30.0
+    #More slav_toolbox parameters can be added here as needed
