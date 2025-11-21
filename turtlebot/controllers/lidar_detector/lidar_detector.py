@@ -9,7 +9,7 @@ class Detection:
         # Polar coordinates 
         self.r = 0.0          # Distance from robot
         self.theta = 0.0      # Angle relative to robot front
-        # Estimated motion (computed using tracking)
+        # Estimated motion 
         self.vx = 0.0         # Velocity in x-direction
         self.vy = 0.0         # Velocity in y-direction 
         self.speed = 0.0      # Total speed 
