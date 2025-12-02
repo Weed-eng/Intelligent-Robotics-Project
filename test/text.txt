@@ -6,9 +6,10 @@ source install/setup.bash
 
 ros2 launch human_aware_nav robot_launch.py ##run
 
-2. ## Start SLAM (using the simplest command): (New Bash terminal)
+2. ## Start SLAM with config file (New Bash terminal)
 source /opt/ros/humble/setup.bash
-ros2 launch slam_toolbox online_async_launch.py
+source ~/human_nav_ws/install/setup.bash
+ros2 launch slam_toolbox online_async_launch.py slam_params_file:=$(ros2 pkg prefix human_aware_nav)/share/human_aware_nav/config/slam_params.yaml
 
 3.##key board control: 
 ros2 run teleop_twist_keyboard teleop_twist_keyboard   #new terminal
