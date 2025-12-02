@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<robot name="MyRobot">
+    <webots>
+        <plugin type="human_aware_nav.driver.MyRobotDriver" />
+    </webots> 
+</robot>

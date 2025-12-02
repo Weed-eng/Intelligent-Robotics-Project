@@ -1,0 +1,29 @@
+running develop
+running egg_info
+creating human_aware_nav.egg-info
+writing human_aware_nav.egg-info/PKG-INFO
+writing dependency_links to human_aware_nav.egg-info/dependency_links.txt
+writing entry points to human_aware_nav.egg-info/entry_points.txt
+writing requirements to human_aware_nav.egg-info/requires.txt
+writing top-level names to human_aware_nav.egg-info/top_level.txt
+writing manifest file 'human_aware_nav.egg-info/SOURCES.txt'
+reading manifest file 'human_aware_nav.egg-info/SOURCES.txt'
+writing manifest file 'human_aware_nav.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/zhoushiwang/human_nav_ws/install/human_aware_nav/lib/python3.10/site-packages/human-aware-nav.egg-link (link to .)
+Installing driver script to /home/zhoushiwang/human_nav_ws/install/human_aware_nav/lib/human_aware_nav
+Installing human_detector script to /home/zhoushiwang/human_nav_ws/install/human_aware_nav/lib/human_aware_nav
+
+Installed /home/zhoushiwang/human_nav_ws/build/human_aware_nav
+running symlink_data
+creating /home/zhoushiwang/human_nav_ws/install/human_aware_nav/share/ament_index
+creating /home/zhoushiwang/human_nav_ws/install/human_aware_nav/share/ament_index/resource_index
+creating /home/zhoushiwang/human_nav_ws/install/human_aware_nav/share/ament_index/resource_index/packages
+symbolically linking /home/zhoushiwang/human_nav_ws/build/human_aware_nav/resource/human_aware_nav -> /home/zhoushiwang/human_nav_ws/install/human_aware_nav/share/ament_index/resource_index/packages
+symbolically linking /home/zhoushiwang/human_nav_ws/build/human_aware_nav/package.xml -> /home/zhoushiwang/human_nav_ws/install/human_aware_nav/share/human_aware_nav
+creating /home/zhoushiwang/human_nav_ws/install/human_aware_nav/share/human_aware_nav/launch
+symbolically linking /home/zhoushiwang/human_nav_ws/build/human_aware_nav/launch/robot_launch.py -> /home/zhoushiwang/human_nav_ws/install/human_aware_nav/share/human_aware_nav/launch
+creating /home/zhoushiwang/human_nav_ws/install/human_aware_nav/share/human_aware_nav/resource
+symbolically linking /home/zhoushiwang/human_nav_ws/build/human_aware_nav/resource/my_robot.urdf -> /home/zhoushiwang/human_nav_ws/install/human_aware_nav/share/human_aware_nav/resource
+creating /home/zhoushiwang/human_nav_ws/install/human_aware_nav/share/human_aware_nav/worlds
+symbolically linking /home/zhoushiwang/human_nav_ws/build/human_aware_nav/worlds/human_env.wbt -> /home/zhoushiwang/human_nav_ws/install/human_aware_nav/share/human_aware_nav/worlds

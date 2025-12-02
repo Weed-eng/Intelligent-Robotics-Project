@@ -1,0 +1,16 @@
+running develop
+running egg_info
+writing human_aware_nav.egg-info/PKG-INFO
+writing dependency_links to human_aware_nav.egg-info/dependency_links.txt
+writing entry points to human_aware_nav.egg-info/entry_points.txt
+writing requirements to human_aware_nav.egg-info/requires.txt
+writing top-level names to human_aware_nav.egg-info/top_level.txt
+reading manifest file 'human_aware_nav.egg-info/SOURCES.txt'
+writing manifest file 'human_aware_nav.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/zhoushiwang/human_nav_ws/install/human_aware_nav/lib/python3.10/site-packages/human-aware-nav.egg-link (link to .)
+Installing driver script to /home/zhoushiwang/human_nav_ws/install/human_aware_nav/lib/human_aware_nav
+Installing human_detector script to /home/zhoushiwang/human_nav_ws/install/human_aware_nav/lib/human_aware_nav
+
+Installed /home/zhoushiwang/human_nav_ws/build/human_aware_nav
+running symlink_data
