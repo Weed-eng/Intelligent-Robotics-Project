@@ -62,12 +62,17 @@ class MyRobotDriver(WebotsController):
     def __cmd_vel_callback(self, twist):
         self.current_v = twist.linear.x
         self.current_w = twist.angular.z
-        
+
         L = 0.16
         R = 0.033
-        
+        MAX_WHEEL_VEL = 6.67  # TurtleBot3Burger motor limit (rad/s)
+
         left_vel = (self.current_v - self.current_w * L / 2) / R
         right_vel = (self.current_v + self.current_w * L / 2) / R
+
+        # Clamp to motor limits
+        left_vel = max(-MAX_WHEEL_VEL, min(MAX_WHEEL_VEL, left_vel))
+        right_vel = max(-MAX_WHEEL_VEL, min(MAX_WHEEL_VEL, right_vel))
 
         if self.left_motor and self.right_motor:
             self.left_motor.setVelocity(left_vel)

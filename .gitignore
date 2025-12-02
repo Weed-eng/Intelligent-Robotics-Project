@@ -47,6 +47,13 @@ release/
 # Webots
 *.wbproj
 runtime.ini
+webots_shared/
+local_simulation_server.py
+
+# Docker (mac-only webots_ros2 setup)
+Dockerfile
+.dockerignore
+.docker/
 
 # IDEs
 .vscode/

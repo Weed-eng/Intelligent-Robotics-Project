@@ -1,1 +1,1 @@
-prepend-non-duplicate;PYTHONPATH;/home/zhoushiwang/human_nav_ws/build/human_aware_nav
+prepend-non-duplicate;PYTHONPATH;/ros2_ws/build/human_aware_nav

@@ -19,9 +19,11 @@ def generate_launch_description():
     ])
 
     # 2. 配置 Webots 启动器
+    # ros2_supervisor=False because we don't need it and it blocks simulation
+    # if no supervisor controller connects
     webots = WebotsLauncher(
         world=world_file,
-        ros2_supervisor=True
+        ros2_supervisor=False
     )
 
     # 3. 配置机器人驱动
