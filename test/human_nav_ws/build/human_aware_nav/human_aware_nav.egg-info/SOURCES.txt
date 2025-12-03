@@ -1,6 +1,7 @@
 package.xml
 setup.cfg
 setup.py
+config/slam_params.yaml
 human_aware_nav/__init__.py
 human_aware_nav/driver.py
 human_aware_nav/human_detector.py
