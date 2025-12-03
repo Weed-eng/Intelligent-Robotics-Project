@@ -1,0 +1,4 @@
+[console_scripts]
+driver = human_aware_nav.driver:main
+human_detector = human_aware_nav.human_detector:main
+
