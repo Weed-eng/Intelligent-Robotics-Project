@@ -1,0 +1,25 @@
+# git
+.git/
+.gitignore
+
+# local docs
+pavel_local.md
+*.md
+
+# python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# webots artifacts
+*.wbproj
+runtime.ini
+webots_shared/
+
+# ide
+.vscode/
+.idea/
+
+# macos
+.DS_Store
+._*
