@@ -31,6 +31,8 @@ setup(
         'console_scripts': [
         'driver = human_aware_nav.driver:main', # 如果这行不在也加上，方便以后调试
     	'human_detector = human_aware_nav.human_detector:main', # <--- 添加这一行
+		'kalman_tracker = human_aware_nav.kalman_tracker:main',
+        'adaptive_safety = human_aware_nav.adaptive_safety:main',
         ],
     },
 )
