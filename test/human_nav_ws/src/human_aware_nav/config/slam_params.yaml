@@ -9,8 +9,9 @@ slam_toolbox:
     map_frame: map
     scan_topic: /scan
 
-    # use simulation time from webots
-    use_sim_time: true
+    # IMPORTANT: use_sim_time must be false because driver.py publishes
+    # wall-clock-based timestamps (not /clock simulation time)
+    use_sim_time: false
 
     # mapping mode
     mode: mapping
