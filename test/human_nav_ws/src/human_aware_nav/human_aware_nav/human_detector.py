@@ -64,7 +64,7 @@ class HumanDetector(Node):
             cy = sum(p[1] for p in cluster) / len(cluster)
 
             marker = Marker()
-            marker.header.frame_id = "base_scan"  # IMPORTANT FIX
+            marker.header.frame_id = "lidar_link"
             marker.header.stamp = timestamp
 
             marker.ns = "humans"

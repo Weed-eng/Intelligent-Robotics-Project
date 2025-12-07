@@ -123,7 +123,7 @@ class KalmanTracker(Node):
 
             # Marker: sphere for object
             m = Marker()
-            m.header.frame_id = "base_scan"
+            m.header.frame_id = "lidar_link"
             m.header.stamp = self.get_clock().now().to_msg()
             m.ns = "tracked_objects"
             m.id = int(t.id[:4], 16)
@@ -143,7 +143,7 @@ class KalmanTracker(Node):
 
             # Marker: arrow for velocity
             v = Marker()
-            v.header.frame_id = "base_scan"
+            v.header.frame_id = "lidar_link"
             v.header.stamp = m.header.stamp
             v.ns = "velocity"
             v.id = m.id + 10000
