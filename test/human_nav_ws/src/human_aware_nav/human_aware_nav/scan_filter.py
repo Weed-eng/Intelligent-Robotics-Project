@@ -1,9 +1,9 @@
 # scan filter - removes MOVING pedestrians from lidar scan for AMCL
 # uses tracked_objects (confirmed moving objects from kalman tracker)
-# falls back to detected_humans ONLY during startup before tracker is ready
 #
-# CRITICAL: only filter MOVING objects, NOT static obstacles
+# CRITICAL: only filter confirmed MOVING objects, NOT static obstacles
 # static obstacles (walls, boxes) must remain visible to AMCL for localization
+# no startup fallback - ensures AMCL always has full static environment
 
 import rclpy
 from rclpy.node import Node
@@ -24,10 +24,6 @@ class ScanFilter(Node):
         self.tracks_sub = self.create_subscription(
             MarkerArray, '/tracked_objects', self.tracks_callback, 10)
 
-        # detected_humans = ALL clusters (fallback during startup only)
-        self.detections_sub = self.create_subscription(
-            MarkerArray, '/detected_humans', self.detections_callback, 10)
-
         self.filtered_pub = self.create_publisher(LaserScan, '/scan_filtered', 10)
 
         # tracked moving objects [(x, y), ...]
@@ -35,17 +31,11 @@ class ScanFilter(Node):
         self.last_track_time = 0.0
         self.track_timeout = 1.0
 
-        # raw detections for startup only
-        self.detected_objects = []
-        self.last_detection_time = 0.0
-        self.detection_timeout = 0.5
-
         # filter radius - just enough to cover pedestrian body
-        self.filter_radius = 0.35
+        self.filter_radius = 0.30  # reduced to be more precise
 
-        # startup grace period - use detections before tracker kicks in
-        self.startup_time = time.time()
-        self.startup_duration = 3.0  # seconds
+        # NO startup fallback - only filter confirmed MOVING objects
+        # this ensures AMCL always sees static obstacles for localization
 
         self.log_counter = 0
 
@@ -64,36 +54,13 @@ class ScanFilter(Node):
                 self.tracked_objects.append((x, y))
         self.last_track_time = time.time()
 
-    def detections_callback(self, msg: MarkerArray):
-        """Receive raw detections (for startup fallback only)."""
-        self.detected_objects = []
-        for marker in msg.markers:
-            if marker.ns == 'humans':
-                x = marker.pose.position.x
-                y = marker.pose.position.y
-                self.detected_objects.append((x, y))
-        self.last_detection_time = time.time()
-
     def scan_callback(self, msg: LaserScan):
         now = time.time()
         track_age = now - self.last_track_time
-        detection_age = now - self.last_detection_time
-        in_startup = (now - self.startup_time) < self.startup_duration
 
-        # determine what to filter
-        # PRIORITY: tracked_objects (moving only) - this is the key!
-        # only fall back to detections during startup grace period
-        objects_to_filter = []
-
-        if track_age < self.track_timeout and self.tracked_objects:
-            # have fresh tracks - use them (MOVING objects only)
-            objects_to_filter = self.tracked_objects
-        elif in_startup and detection_age < self.detection_timeout and self.detected_objects:
-            # startup fallback - filter detections until tracker kicks in
-            objects_to_filter = self.detected_objects
-
-        # if no moving objects, pass scan unchanged
-        if not objects_to_filter:
+        # only filter if we have fresh tracked MOVING objects
+        # no startup fallback - AMCL must always see static obstacles
+        if track_age > self.track_timeout or not self.tracked_objects:
             self.filtered_pub.publish(msg)
             return
 
@@ -120,7 +87,7 @@ class ScanFilter(Node):
             y = r * math.sin(angle)
 
             # check if near any tracked moving object
-            for ox, oy in objects_to_filter:
+            for ox, oy in self.tracked_objects:
                 if math.hypot(x - ox, y - oy) < self.filter_radius:
                     filtered_ranges[i] = float('inf')
                     filtered_count += 1
@@ -134,9 +101,8 @@ class ScanFilter(Node):
         # periodic logging
         self.log_counter += 1
         if filtered_count > 0 and self.log_counter % 100 == 0:
-            source = 'tracks' if self.tracked_objects else 'detections'
             self.get_logger().info(
-                f'Filtered {filtered_count} pts from {len(objects_to_filter)} moving {source}'
+                f'Filtered {filtered_count} pts from {len(self.tracked_objects)} moving objects'
             )
 
 

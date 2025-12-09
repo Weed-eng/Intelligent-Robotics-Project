@@ -1,13 +1,6 @@
 package.xml
 setup.cfg
 setup.py
-../../build/human_aware_nav/human_aware_nav.egg-info/PKG-INFO
-../../build/human_aware_nav/human_aware_nav.egg-info/SOURCES.txt
-../../build/human_aware_nav/human_aware_nav.egg-info/dependency_links.txt
-../../build/human_aware_nav/human_aware_nav.egg-info/entry_points.txt
-../../build/human_aware_nav/human_aware_nav.egg-info/requires.txt
-../../build/human_aware_nav/human_aware_nav.egg-info/top_level.txt
-../../build/human_aware_nav/human_aware_nav.egg-info/zip-safe
 config/nav2_params.yaml
 config/slam_params.yaml
 human_aware_nav/__init__.py
@@ -15,6 +8,7 @@ human_aware_nav/adaptive_safety.py
 human_aware_nav/driver.py
 human_aware_nav/human_detector.py
 human_aware_nav/kalman_tracker.py
+human_aware_nav/scan_filter.py
 human_aware_nav.egg-info/PKG-INFO
 human_aware_nav.egg-info/SOURCES.txt
 human_aware_nav.egg-info/dependency_links.txt

@@ -1,7 +1,6 @@
-# adaptive safety - predictive pedestrian avoidance
-# complements DWB (reactive) with prediction using kalman velocities
-# ONLY intervenes when there's a real collision threat
-# lets DWB handle normal obstacle avoidance
+# adaptive safety - trajectory-based pedestrian avoidance
+# uses Closest Point of Approach (CPA) to predict actual collisions
+# only intervenes when paths will intersect, not just when pedestrians are nearby
 
 import rclpy
 from rclpy.node import Node
@@ -41,27 +40,22 @@ class AdaptiveSafety(Node):
 
         # robot parameters (turtlebot3 burger)
         self.robot_radius = 0.12
-        self.human_radius = 0.10
+        self.human_radius = 0.15
         self.safety_margin = 0.08
-        self.collision_dist = self.robot_radius + self.human_radius + self.safety_margin  # ~0.30m
+        self.collision_radius = self.robot_radius + self.human_radius + self.safety_margin
 
         self.robot_max_speed = 0.22
         self.robot_max_turn = 1.5
 
-        # thresholds - less aggressive than before
-        self.react_dist = 1.5        # only consider pedestrians within this range
-        self.slow_dist = 0.8         # start slowing down
-        self.stop_dist = 0.45        # stop if this close
-        self.emergency_dist = 0.25   # emergency backup
-
-        # steering state - commit to direction
-        self.steer_direction = 0     # -1 = right, 0 = none, 1 = left
-        self.steer_commit_time = 0.0
-        self.steer_commit_duration = 1.0  # commit for 1 second
+        # CPA-based thresholds
+        self.cpa_danger = 0.35      # if CPA < this, paths will collide
+        self.cpa_caution = 0.50     # if CPA < this, slow down
+        self.max_reaction_time = 3.0  # only react to collisions within 3s
+        self.emergency_dist = 0.25  # immediate danger zone
 
         self.get_logger().info(
-            f'Adaptive safety: collision_dist={self.collision_dist:.2f}m, '
-            f'react_dist={self.react_dist:.2f}m'
+            f'Adaptive safety (CPA-based): collision_radius={self.collision_radius:.2f}m, '
+            f'cpa_danger={self.cpa_danger:.2f}m'
         )
 
     def odom_callback(self, msg):
@@ -95,6 +89,41 @@ class AdaptiveSafety(Node):
         self.last_cmd = msg
         self.last_cmd_time = time.time()
 
+    def compute_cpa(self, px, py, vx, vy):
+        """
+        Compute Closest Point of Approach (CPA) between robot and pedestrian.
+
+        In lidar frame:
+        - Robot is at origin (0, 0) and effectively stationary
+        - Pedestrian velocity is already relative to robot (lidar moves with robot)
+        - Pedestrian at (px, py) moving at (vx, vy)
+        - Future position: (px + vx*t, py + vy*t)
+
+        Returns: (t_cpa, cpa_dist)
+        - t_cpa: time until closest approach (negative = already passed)
+        - cpa_dist: minimum distance at closest approach
+        """
+        # relative velocity magnitude squared
+        v_sq = vx * vx + vy * vy
+
+        if v_sq < 0.001:  # pedestrian nearly stationary relative to robot
+            # CPA is current position
+            return 0.0, math.hypot(px, py)
+
+        # time to closest approach: t = -dot(pos, vel) / |vel|^2
+        t_cpa = -(px * vx + py * vy) / v_sq
+
+        if t_cpa < 0:
+            # closest approach was in the past, return current distance
+            return t_cpa, math.hypot(px, py)
+
+        # position at time of closest approach
+        cpa_x = px + vx * t_cpa
+        cpa_y = py + vy * t_cpa
+        cpa_dist = math.hypot(cpa_x, cpa_y)
+
+        return t_cpa, cpa_dist
+
     def safety_callback(self):
         now = time.time()
 
@@ -108,92 +137,117 @@ class AdaptiveSafety(Node):
         cmd.linear.x = self.last_cmd.linear.x
         cmd.angular.z = self.last_cmd.angular.z
 
-        # find the most threatening pedestrian
-        closest_dist = float('inf')
+        # find the most dangerous pedestrian based on CPA
+        most_urgent_tcpa = float('inf')
         threat_ped = None
-        threat_level = 'NONE'  # NONE, SLOW, STOP, EMERGENCY
+        threat_level = 'NONE'
 
         for p in self.pedestrians:
             px, py = p['x'], p['y']
             vx, vy = p['vx'], p['vy']
             dist = math.hypot(px, py)
 
-            # skip pedestrians behind us or too far
-            if px < -0.1 or dist > self.react_dist:
+            # skip pedestrians behind us
+            if px < -0.15:
                 continue
 
-            # is this pedestrian approaching us?
-            ped_speed = math.hypot(vx, vy)
-            approach_speed = -(px * vx + py * vy) / dist if dist > 0.01 else 0
-
-            # pedestrian walking toward robot?
-            ped_toward_robot = approach_speed > 0.05
-
-            # check if this is a real threat
-            if dist < closest_dist:
-                closest_dist = dist
+            # EMERGENCY: very close regardless of trajectory
+            if dist < self.emergency_dist:
+                threat_level = 'EMERGENCY'
                 threat_ped = p
+                threat_ped['dist'] = dist
+                break
 
-                if dist < self.emergency_dist:
-                    threat_level = 'EMERGENCY'
-                elif dist < self.stop_dist and (ped_toward_robot or ped_speed < 0.1):
-                    threat_level = 'STOP'
-                elif dist < self.slow_dist:
-                    threat_level = 'SLOW'
+            # compute closest point of approach
+            t_cpa, cpa_dist = self.compute_cpa(px, py, vx, vy)
+
+            # skip if CPA is in the past (pedestrian already passed)
+            if t_cpa < 0:
+                continue
+
+            # skip if CPA is too far in the future
+            if t_cpa > self.max_reaction_time:
+                continue
+
+            # skip if paths won't come close (no collision risk)
+            if cpa_dist > self.cpa_caution:
+                continue
+
+            # this pedestrian is a potential threat - check if most urgent
+            # urgency = how soon AND how close
+            urgency = t_cpa + cpa_dist  # lower = more urgent
+
+            if urgency < most_urgent_tcpa + (threat_ped['cpa'] if threat_ped else float('inf')):
+                most_urgent_tcpa = t_cpa
+                threat_ped = p
+                threat_ped['t_cpa'] = t_cpa
+                threat_ped['cpa'] = cpa_dist
+                threat_ped['dist'] = dist
+
+                # determine threat level based on CPA and time
+                if cpa_dist < self.cpa_danger:
+                    if t_cpa < 1.0:
+                        threat_level = 'STOP'
+                    elif t_cpa < 2.0:
+                        threat_level = 'SLOW'
+                    else:
+                        threat_level = 'CAUTION'
+                elif cpa_dist < self.cpa_caution:
+                    if t_cpa < 1.5:
+                        threat_level = 'SLOW'
+                    else:
+                        threat_level = 'CAUTION'
 
         # handle threat
         if threat_level == 'EMERGENCY' and threat_ped:
-            # emergency - pedestrian very close
             px, py = threat_ped['x'], threat_ped['y']
+            dist = threat_ped['dist']
 
             if px > 0:
-                # pedestrian in front - stop or backup
-                cmd.linear.x = -0.05  # gentle backup
-                cmd.angular.z = 1.0 if py > 0 else -1.0  # turn away
-                self.get_logger().warn(f'EMERGENCY: ped at {closest_dist:.2f}m')
+                # pedestrian in front - backup and turn away
+                cmd.linear.x = -0.10
+                cmd.angular.z = 1.2 if py > 0 else -1.2
+                self.get_logger().warn(f'EMERGENCY: ped at {dist:.2f}m - backing up')
             else:
-                # pedestrian behind - move forward
+                # pedestrian behind - accelerate forward
                 cmd.linear.x = self.robot_max_speed
                 cmd.angular.z = 0.5 if py > 0 else -0.5
-                self.get_logger().warn(f'EMERGENCY ESCAPE: ped behind at {closest_dist:.2f}m')
+                self.get_logger().warn(f'EMERGENCY ESCAPE: ped behind at {dist:.2f}m')
 
-        elif threat_level == 'STOP':
+        elif threat_level == 'STOP' and threat_ped:
+            # collision imminent - full stop
             cmd.linear.x = 0.0
-            self.get_logger().info(f'STOP: ped at {closest_dist:.2f}m')
+            t_cpa = threat_ped['t_cpa']
+            cpa = threat_ped['cpa']
+            dist = threat_ped['dist']
+            self.get_logger().info(
+                f'STOP: collision in {t_cpa:.1f}s, CPA={cpa:.2f}m, dist={dist:.2f}m'
+            )
 
         elif threat_level == 'SLOW' and threat_ped:
-            # slow down and steer around
-            px, py = threat_ped['x'], threat_ped['y']
-            vx, vy = threat_ped['vx'], threat_ped['vy']
+            # collision likely - slow down proportionally
+            t_cpa = threat_ped['t_cpa']
+            cpa = threat_ped['cpa']
+            dist = threat_ped['dist']
 
-            # determine steer direction - perpendicular to pedestrian's path
-            # if ped moving right (vy < 0), go left (+)
-            # if ped moving left (vy > 0), go right (-)
-            # if ped stationary, go away from them
-            if math.hypot(vx, vy) > 0.1:
-                desired_dir = 1 if vy < 0 else -1
-            else:
-                desired_dir = -1 if py > 0 else 1
-
-            # commit to steering direction
-            if now - self.steer_commit_time > self.steer_commit_duration:
-                self.steer_direction = desired_dir
-                self.steer_commit_time = now
-
-            # apply steering with committed direction
-            steer_amount = self.steer_direction * 0.8  # moderate turn
-            cmd.angular.z = cmd.angular.z * 0.3 + steer_amount * 0.7
-
-            # slow down based on distance
-            slow_factor = (closest_dist - self.stop_dist) / (self.slow_dist - self.stop_dist)
-            slow_factor = max(0.2, min(1.0, slow_factor))
+            # slow factor based on time to collision
+            slow_factor = min(1.0, t_cpa / 2.0)  # full speed at 2s, zero at 0s
+            slow_factor = max(0.2, slow_factor)  # minimum 20% speed
             cmd.linear.x = cmd.linear.x * slow_factor
 
-            direction = 'LEFT' if self.steer_direction > 0 else 'RIGHT'
-            self.get_logger().info(f'STEER {direction}: ped at {closest_dist:.2f}m')
+            self.get_logger().info(
+                f'SLOW: collision in {t_cpa:.1f}s, CPA={cpa:.2f}m, dist={dist:.2f}m, factor={slow_factor:.1f}'
+            )
+
+        elif threat_level == 'CAUTION' and threat_ped:
+            # potential collision - minor slowdown
+            t_cpa = threat_ped['t_cpa']
+            cpa = threat_ped['cpa']
+            slow_factor = 0.7  # 70% speed
+            cmd.linear.x = cmd.linear.x * slow_factor
 
         # clamp velocities
-        cmd.linear.x = max(-0.1, min(self.robot_max_speed, cmd.linear.x))
+        cmd.linear.x = max(-0.15, min(self.robot_max_speed, cmd.linear.x))
         cmd.angular.z = max(-self.robot_max_turn, min(self.robot_max_turn, cmd.angular.z))
 
         self.cmd_pub.publish(cmd)
