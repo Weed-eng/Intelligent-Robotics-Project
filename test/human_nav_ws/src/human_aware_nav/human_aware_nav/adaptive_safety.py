@@ -1,6 +1,7 @@
-# adaptive safety module with ego-motion compensation and timer-based monitoring
-# subscribes to /tracked_objects, /cmd_vel_raw, /odom
-# publishes safe /cmd_vel continuously at 20Hz
+# adaptive safety - predictive pedestrian avoidance
+# complements DWB (reactive) with prediction using kalman velocities
+# ONLY intervenes when there's a real collision threat
+# lets DWB handle normal obstacle avoidance
 
 import rclpy
 from rclpy.node import Node
@@ -16,263 +17,186 @@ class AdaptiveSafety(Node):
     def __init__(self):
         super().__init__('adaptive_safety')
 
-        # subscribe to tracked objects from kalman tracker
         self.tracks_sub = self.create_subscription(
-            MarkerArray,
-            '/tracked_objects',
-            self.tracked_objects_callback,
-            10
-        )
-
-        # subscribe to raw velocity commands (from teleop or Nav2)
-        self.cmd_raw_sub = self.create_subscription(
-            Twist,
-            '/cmd_vel_raw',
-            self.cmd_raw_callback,
-            10
-        )
-
-        # subscribe to odometry for robot velocity (ego-motion compensation)
+            MarkerArray, '/tracked_objects', self.tracks_callback, 10)
+        self.cmd_sub = self.create_subscription(
+            Twist, '/cmd_vel_raw', self.cmd_callback, 10)
         self.odom_sub = self.create_subscription(
-            Odometry,
-            '/odom',
-            self.odom_callback,
-            10
-        )
+            Odometry, '/odom', self.odom_callback, 10)
 
-        # publish filtered safe velocity commands
-        self.cmd_safe_pub = self.create_publisher(Twist, '/cmd_vel', 10)
+        self.cmd_pub = self.create_publisher(Twist, '/cmd_vel', 10)
 
-        # robot velocity from odometry (for ego-motion compensation)
-        self.robot_vx = 0.0  # linear velocity in x (m/s)
-        self.robot_wz = 0.0  # angular velocity around z (rad/s)
+        # robot state
+        self.robot_vx = 0.0
+        self.robot_wz = 0.0
+        self.last_cmd = Twist()
+        self.last_cmd_time = 0.0
 
-        # last raw command for timer-based re-evaluation
-        self.last_raw_cmd = Twist()
-        self.last_raw_cmd_time = 0.0
-        self.cmd_timeout = 0.5  # stop if no command for this long
+        # safety timer at 20Hz
+        self.timer = self.create_timer(0.05, self.safety_callback)
 
-        # timer for continuous safety monitoring (20 Hz)
-        self.safety_timer = self.create_timer(0.05, self.safety_timer_callback)
+        # tracked pedestrians
+        self.pedestrians = []
+        self.last_track_time = time.time()
 
-        # store positions and smoothed velocities of tracked objects
-        # key: (ns, id) -> dict with x, y, t, vx_smooth, vy_smooth
-        self.last_positions = {}
+        # robot parameters (turtlebot3 burger)
+        self.robot_radius = 0.12
+        self.human_radius = 0.10
+        self.safety_margin = 0.08
+        self.collision_dist = self.robot_radius + self.human_radius + self.safety_margin  # ~0.30m
 
-        # velocity smoothing (low-pass filter)
-        self.velocity_alpha = 0.3  # higher = more responsive, lower = smoother
+        self.robot_max_speed = 0.22
+        self.robot_max_turn = 1.5
 
-        # current threat state (from moving objects only)
-        self.current_ttc = None
-        self.current_dist = None
-        self.last_threat_time = time.time()
-        self.consecutive_threats = 0
-        self.min_consecutive = 3  # require consecutive detections
+        # thresholds - less aggressive than before
+        self.react_dist = 1.5        # only consider pedestrians within this range
+        self.slow_dist = 0.8         # start slowing down
+        self.stop_dist = 0.45        # stop if this close
+        self.emergency_dist = 0.25   # emergency backup
 
-        # safety thresholds (tuned for scaled pedestrians at ~0.5 m/s)
-        self.approach_speed_threshold = 0.3  # m/s - object must approach faster than this
-        self.ttc_stop_threshold = 1.5        # s - hard stop if TTC below this
-        self.ttc_slow_threshold = 3.0        # s - start slowing if TTC below this
-        self.emergency_stop_dist = 0.25      # m - hard stop if anything this close
-
-        # distance filters
-        self.min_detection_dist = 0.15  # ignore very close (noise)
-        self.max_detection_dist = 3.0   # ignore far objects
-
-        # sanity check - ignore unrealistic velocities
-        self.max_reasonable_speed = 2.0  # m/s
-
-        # threat timeout
-        self.threat_timeout = 0.5  # s
-
-        # closest object distance (for emergency stop)
-        self.closest_object_dist = float('inf')
+        # steering state - commit to direction
+        self.steer_direction = 0     # -1 = right, 0 = none, 1 = left
+        self.steer_commit_time = 0.0
+        self.steer_commit_duration = 1.0  # commit for 1 second
 
         self.get_logger().info(
-            "Adaptive safety started (timer-based, ego-motion compensated, "
-            f"approach_threshold={self.approach_speed_threshold} m/s)"
+            f'Adaptive safety: collision_dist={self.collision_dist:.2f}m, '
+            f'react_dist={self.react_dist:.2f}m'
         )
 
-    def odom_callback(self, msg: Odometry):
-        # extract robot velocity from odometry
+    def odom_callback(self, msg):
         self.robot_vx = msg.twist.twist.linear.x
         self.robot_wz = msg.twist.twist.angular.z
 
-    def tracked_objects_callback(self, msg: MarkerArray):
-        # process tracked objects, compute compensated velocities, detect threats
-        now = time.time()
-
-        candidate_ttc = None
-        candidate_dist = None
-        threat_found = False
-        min_dist = float('inf')
+    def tracks_callback(self, msg):
+        """Extract pedestrian positions and velocities."""
+        self.pedestrians = []
+        positions = {}
+        velocities = {}
 
         for m in msg.markers:
-            # only process position markers (not velocity arrows)
-            if m.ns != 'tracked_objects':
-                continue
+            if m.ns == 'tracked_objects':
+                positions[m.id] = (m.pose.position.x, m.pose.position.y)
+            elif m.ns == 'velocity' and len(m.points) >= 2:
+                ped_id = m.id - 10000
+                vx = m.points[1].x - m.points[0].x
+                vy = m.points[1].y - m.points[0].y
+                velocities[ped_id] = (vx, vy)
 
-            key = (m.ns, m.id)
-            x = m.pose.position.x
-            y = m.pose.position.y
-            dist = math.hypot(x, y)
+        for ped_id, (px, py) in positions.items():
+            vx, vy = velocities.get(ped_id, (0.0, 0.0))
+            self.pedestrians.append({
+                'x': px, 'y': py, 'vx': vx, 'vy': vy, 'id': ped_id
+            })
 
-            # track closest object for emergency stop
-            if dist > 0.1 and dist < min_dist:
-                min_dist = dist
+        self.last_track_time = time.time()
 
-            # skip objects outside detection range
-            if dist < self.min_detection_dist or dist > self.max_detection_dist:
-                continue
+    def cmd_callback(self, msg):
+        self.last_cmd = msg
+        self.last_cmd_time = time.time()
 
-            # compute velocity with ego-motion compensation
-            if key in self.last_positions:
-                prev = self.last_positions[key]
-                dt = now - prev['t']
-
-                if 0.03 < dt < 1.0:  # valid time delta
-                    # raw measured velocity (apparent motion in lidar_link frame)
-                    vx_meas = (x - prev['x']) / dt
-                    vy_meas = (y - prev['y']) / dt
-
-                    # ego-motion compensation:
-                    # when robot moves forward, static objects appear to move backward
-                    # when robot rotates, static objects appear to move tangentially
-                    # compensated velocity = measured + robot_motion_effect
-                    vx_comp = vx_meas + self.robot_vx - self.robot_wz * y
-                    vy_comp = vy_meas + self.robot_wz * x
-
-                    # smooth the compensated velocity
-                    vx_smooth = (self.velocity_alpha * vx_comp +
-                                (1 - self.velocity_alpha) * prev.get('vx_smooth', 0.0))
-                    vy_smooth = (self.velocity_alpha * vy_comp +
-                                (1 - self.velocity_alpha) * prev.get('vy_smooth', 0.0))
-
-                    # compute speed and approach speed
-                    speed = math.hypot(vx_smooth, vy_smooth)
-
-                    # sanity check - ignore unrealistic speeds
-                    if speed > self.max_reasonable_speed:
-                        self.last_positions[key] = {
-                            'x': x, 'y': y, 't': now,
-                            'vx_smooth': 0.0, 'vy_smooth': 0.0
-                        }
-                        continue
-
-                    # approach speed (positive = moving toward robot)
-                    if dist > 1e-3:
-                        approach_speed = -(x * vx_smooth + y * vy_smooth) / dist
-                    else:
-                        approach_speed = 0.0
-
-                    # is this object approaching us fast enough to be a threat?
-                    if approach_speed > self.approach_speed_threshold:
-                        ttc = dist / max(approach_speed, 1e-3)
-                        if candidate_ttc is None or ttc < candidate_ttc:
-                            candidate_ttc = ttc
-                            candidate_dist = dist
-                            threat_found = True
-
-                    self.last_positions[key] = {
-                        'x': x, 'y': y, 't': now,
-                        'vx_smooth': vx_smooth, 'vy_smooth': vy_smooth
-                    }
-                else:
-                    # time delta out of range, reset velocity
-                    self.last_positions[key] = {
-                        'x': x, 'y': y, 't': now,
-                        'vx_smooth': 0.0, 'vy_smooth': 0.0
-                    }
-            else:
-                # new track
-                self.last_positions[key] = {
-                    'x': x, 'y': y, 't': now,
-                    'vx_smooth': 0.0, 'vy_smooth': 0.0
-                }
-
-        # update closest object distance
-        self.closest_object_dist = min_dist
-
-        # update threat state (require consecutive detections)
-        if threat_found:
-            self.consecutive_threats += 1
-            self.last_threat_time = now
-            if self.consecutive_threats >= self.min_consecutive:
-                self.current_ttc = candidate_ttc
-                self.current_dist = candidate_dist
-                self.get_logger().info(
-                    f"Moving object: dist={candidate_dist:.2f}m, ttc={candidate_ttc:.2f}s"
-                )
-        else:
-            self.consecutive_threats = 0
-            if now - self.last_threat_time > self.threat_timeout:
-                self.current_ttc = None
-                self.current_dist = None
-
-    def cmd_raw_callback(self, cmd: Twist):
-        # store raw command for timer-based processing
-        self.last_raw_cmd = cmd
-        self.last_raw_cmd_time = time.time()
-
-    def safety_timer_callback(self):
-        # continuous safety check at 20Hz
-        # this allows stopping even if no new commands arrive
+    def safety_callback(self):
         now = time.time()
 
-        # if no recent command, gradually stop
-        if now - self.last_raw_cmd_time > self.cmd_timeout:
-            safe_cmd = Twist()
-            self.cmd_safe_pub.publish(safe_cmd)
+        # no command from Nav2 - stop
+        if now - self.last_cmd_time > 0.5:
+            self.cmd_pub.publish(Twist())
             return
 
-        # start with last raw command
-        safe_cmd = Twist()
-        safe_cmd.linear.x = self.last_raw_cmd.linear.x
-        safe_cmd.linear.y = self.last_raw_cmd.linear.y
-        safe_cmd.linear.z = self.last_raw_cmd.linear.z
-        safe_cmd.angular.x = self.last_raw_cmd.angular.x
-        safe_cmd.angular.y = self.last_raw_cmd.angular.y
-        safe_cmd.angular.z = self.last_raw_cmd.angular.z
+        # start with Nav2's command
+        cmd = Twist()
+        cmd.linear.x = self.last_cmd.linear.x
+        cmd.angular.z = self.last_cmd.angular.z
 
-        # EMERGENCY STOP: if any object is too close
-        if self.closest_object_dist < self.emergency_stop_dist:
-            safe_cmd.linear.x = 0.0
-            safe_cmd.linear.y = 0.0
-            safe_cmd.angular.z = 0.0
-            self.get_logger().warn(
-                f"EMERGENCY STOP: object at {self.closest_object_dist:.2f}m"
-            )
-            self.cmd_safe_pub.publish(safe_cmd)
-            return
+        # find the most threatening pedestrian
+        closest_dist = float('inf')
+        threat_ped = None
+        threat_level = 'NONE'  # NONE, SLOW, STOP, EMERGENCY
 
-        # TTC-based safety for moving objects
-        if self.current_ttc is not None:
-            ttc = self.current_ttc
-            dist = self.current_dist or 999
+        for p in self.pedestrians:
+            px, py = p['x'], p['y']
+            vx, vy = p['vx'], p['vy']
+            dist = math.hypot(px, py)
 
-            # hard stop if collision imminent
-            if ttc < self.ttc_stop_threshold:
-                safe_cmd.linear.x = 0.0
-                safe_cmd.linear.y = 0.0
-                safe_cmd.angular.z *= 0.3  # allow some rotation
-                self.get_logger().warn(
-                    f"STOP: ttc={ttc:.2f}s, dist={dist:.2f}m"
-                )
-                self.cmd_safe_pub.publish(safe_cmd)
-                return
+            # skip pedestrians behind us or too far
+            if px < -0.1 or dist > self.react_dist:
+                continue
 
-            # slow down if TTC is low
-            if ttc < self.ttc_slow_threshold:
-                factor = (ttc - self.ttc_stop_threshold) / (
-                    self.ttc_slow_threshold - self.ttc_stop_threshold
-                )
-                factor = max(0.2, min(1.0, factor))
-                safe_cmd.linear.x *= factor
-                self.get_logger().info(
-                    f"Slowing: ttc={ttc:.2f}s, factor={factor:.2f}"
-                )
+            # is this pedestrian approaching us?
+            ped_speed = math.hypot(vx, vy)
+            approach_speed = -(px * vx + py * vy) / dist if dist > 0.01 else 0
 
-        self.cmd_safe_pub.publish(safe_cmd)
+            # pedestrian walking toward robot?
+            ped_toward_robot = approach_speed > 0.05
+
+            # check if this is a real threat
+            if dist < closest_dist:
+                closest_dist = dist
+                threat_ped = p
+
+                if dist < self.emergency_dist:
+                    threat_level = 'EMERGENCY'
+                elif dist < self.stop_dist and (ped_toward_robot or ped_speed < 0.1):
+                    threat_level = 'STOP'
+                elif dist < self.slow_dist:
+                    threat_level = 'SLOW'
+
+        # handle threat
+        if threat_level == 'EMERGENCY' and threat_ped:
+            # emergency - pedestrian very close
+            px, py = threat_ped['x'], threat_ped['y']
+
+            if px > 0:
+                # pedestrian in front - stop or backup
+                cmd.linear.x = -0.05  # gentle backup
+                cmd.angular.z = 1.0 if py > 0 else -1.0  # turn away
+                self.get_logger().warn(f'EMERGENCY: ped at {closest_dist:.2f}m')
+            else:
+                # pedestrian behind - move forward
+                cmd.linear.x = self.robot_max_speed
+                cmd.angular.z = 0.5 if py > 0 else -0.5
+                self.get_logger().warn(f'EMERGENCY ESCAPE: ped behind at {closest_dist:.2f}m')
+
+        elif threat_level == 'STOP':
+            cmd.linear.x = 0.0
+            self.get_logger().info(f'STOP: ped at {closest_dist:.2f}m')
+
+        elif threat_level == 'SLOW' and threat_ped:
+            # slow down and steer around
+            px, py = threat_ped['x'], threat_ped['y']
+            vx, vy = threat_ped['vx'], threat_ped['vy']
+
+            # determine steer direction - perpendicular to pedestrian's path
+            # if ped moving right (vy < 0), go left (+)
+            # if ped moving left (vy > 0), go right (-)
+            # if ped stationary, go away from them
+            if math.hypot(vx, vy) > 0.1:
+                desired_dir = 1 if vy < 0 else -1
+            else:
+                desired_dir = -1 if py > 0 else 1
+
+            # commit to steering direction
+            if now - self.steer_commit_time > self.steer_commit_duration:
+                self.steer_direction = desired_dir
+                self.steer_commit_time = now
+
+            # apply steering with committed direction
+            steer_amount = self.steer_direction * 0.8  # moderate turn
+            cmd.angular.z = cmd.angular.z * 0.3 + steer_amount * 0.7
+
+            # slow down based on distance
+            slow_factor = (closest_dist - self.stop_dist) / (self.slow_dist - self.stop_dist)
+            slow_factor = max(0.2, min(1.0, slow_factor))
+            cmd.linear.x = cmd.linear.x * slow_factor
+
+            direction = 'LEFT' if self.steer_direction > 0 else 'RIGHT'
+            self.get_logger().info(f'STEER {direction}: ped at {closest_dist:.2f}m')
+
+        # clamp velocities
+        cmd.linear.x = max(-0.1, min(self.robot_max_speed, cmd.linear.x))
+        cmd.angular.z = max(-self.robot_max_turn, min(self.robot_max_turn, cmd.angular.z))
+
+        self.cmd_pub.publish(cmd)
 
 
 def main(args=None):

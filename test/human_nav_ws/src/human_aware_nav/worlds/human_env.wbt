@@ -96,7 +96,7 @@ DEF PEDESTRIAN1 Robot {
   controllerArgs [
     "--start=2.2,-1.8"
     "--end=-2.2,-1.8"
-    "--speed=0.5"
+    "--speed=0.38"
   ]
   children [
     DEF BODY1 Shape {
@@ -124,7 +124,7 @@ DEF PEDESTRIAN2 Robot {
   controllerArgs [
     "--start=-2.3,-1.2"
     "--end=2.3,-1.2"
-    "--speed=0.55"
+    "--speed=0.42"
   ]
   children [
     DEF BODY2 Shape {
@@ -152,7 +152,7 @@ DEF PEDESTRIAN3 Robot {
   controllerArgs [
     "--start=2.4,-0.6"
     "--end=-2.4,-0.6"
-    "--speed=0.45"
+    "--speed=0.34"
   ]
   children [
     DEF BODY3 Shape {
@@ -180,7 +180,7 @@ DEF PEDESTRIAN4 Robot {
   controllerArgs [
     "--start=-2.5,0.0"
     "--end=2.5,0.0"
-    "--speed=0.6"
+    "--speed=0.46"
   ]
   children [
     DEF BODY4 Shape {
@@ -208,7 +208,7 @@ DEF PEDESTRIAN5 Robot {
   controllerArgs [
     "--start=2.5,0.6"
     "--end=-2.5,0.6"
-    "--speed=0.5"
+    "--speed=0.38"
   ]
   children [
     DEF BODY5 Shape {
@@ -236,7 +236,7 @@ DEF PEDESTRIAN6 Robot {
   controllerArgs [
     "--start=-2.4,1.2"
     "--end=2.4,1.2"
-    "--speed=0.55"
+    "--speed=0.42"
   ]
   children [
     DEF BODY6 Shape {
@@ -264,7 +264,7 @@ DEF PEDESTRIAN7 Robot {
   controllerArgs [
     "--start=2.2,1.6"
     "--end=-2.2,1.6"
-    "--speed=0.45"
+    "--speed=0.34"
   ]
   children [
     DEF BODY7 Shape {
@@ -292,7 +292,7 @@ DEF PEDESTRIAN8 Robot {
   controllerArgs [
     "--start=-1.8,-2.2"
     "--end=1.8,-2.2"
-    "--speed=0.5"
+    "--speed=0.38"
   ]
   children [
     DEF BODY8 Shape {

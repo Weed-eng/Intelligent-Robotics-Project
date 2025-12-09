@@ -1,6 +1,6 @@
 # nav2 launch file for human-aware navigation
 # uses saved map + AMCL for localization, DWB for local planning
-# controller output remapped to /cmd_vel_raw for adaptive_safety filtering
+# DWB outputs to /cmd_vel_raw, adaptive_safety adds predictive layer to /cmd_vel
 
 import os
 from launch import LaunchDescription
@@ -17,7 +17,7 @@ def generate_launch_description():
 
     # paths to config and map files
     nav2_params_file = os.path.join(package_dir, 'config', 'nav2_params.yaml')
-    map_file = os.path.join(package_dir, 'maps', 'arena_map.yaml')
+    map_file = os.path.join(package_dir, 'maps', 'test_map.yaml')
 
     # launch arguments
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
@@ -45,13 +45,13 @@ def generate_launch_description():
     )
 
     # AMCL localization node
+    # uses raw scan - particle filter handles dynamic obstacles
     amcl_node = Node(
         package='nav2_amcl',
         executable='amcl',
         name='amcl',
         output='screen',
-        parameters=[configured_params],
-        remappings=[('scan', 'scan')]
+        parameters=[configured_params]
     )
 
     # planner server (global path planning)
@@ -64,7 +64,7 @@ def generate_launch_description():
     )
 
     # controller server (DWB local planner)
-    # IMPORTANT: remap cmd_vel to cmd_vel_raw so adaptive_safety can filter
+    # outputs to /cmd_vel_raw, adaptive_safety filters to /cmd_vel
     controller_server_node = Node(
         package='nav2_controller',
         executable='controller_server',

@@ -196,15 +196,13 @@ class MyRobotDriver(WebotsController):
                 num_ranges = len(ranges)
                 fov = self.lidar.getFov()
 
-                # Webots LiDAR returns ranges from -FOV/2 to +FOV/2
-                # BUT the spin direction might be opposite to ROS convention
-                # Try reversing the ranges to fix mirrored scans
+                # Webots LiDAR scans opposite direction to ROS convention
+                # MUST reverse - SLAM map was built with reversed scans
                 ranges_list = list(ranges)
-                ranges_list.reverse()  # flip scan direction
+                ranges_list.reverse()
 
                 msg.angle_min = -fov / 2
                 msg.angle_max = fov / 2
-                # use actual number of ranges, not getHorizontalResolution()
                 msg.angle_increment = fov / num_ranges
                 msg.range_min = self.lidar.getMinRange()
                 msg.range_max = self.lidar.getMaxRange()
