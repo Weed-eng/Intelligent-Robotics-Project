@@ -1,22 +1,27 @@
-# adaptive safety v7.0 - proper evasion logic
+# adaptive safety v8.0 - distance-first safety
 #
-# KEY PRINCIPLE: When robot IS in pedestrian's path, it MUST MOVE.
-# Stopping when you're in someone's path doesn't help - you'll still be hit!
+# KEY PRINCIPLE: DISTANCE IS KING
+# No matter what trajectory analysis says, if ped is too close, react!
 #
-# LOGIC:
-# 1) Scan for approaching pedestrians
-# 2) IF robot IN pedestrian's path (perp_dist < 0.30m):
-#    -> MUST EVADE (physically move out of the way)
-#    -> Choose based on pedestrian angle:
-#       - Behind (>90°): go FORWARD
-#       - Side (45-90°): go FORWARD + strong steer away
-#       - Ahead (<45°): BACKUP if close, else FORWARD + steer
-#    -> NO STOPPING when in path!
+# v7.0 BUG: in_path_threshold (0.30m) was LESS than collision_radius (0.37m)
+# Robot would STOP when "not in path" even if ped was 0.29m away = COLLISION!
+# Also: t_closest > 0 requirement caused STOP when ped passed closest point
 #
-# 3) IF robot NOT in path (perp_dist >= 0.30m):
-#    -> STOP/SLOW and let pedestrian pass
+# v8.0 FIX: Priority-based decision with distance override
 #
-# 4) Hysteresis: once evading, stay evading until clearly safe
+# PRIORITY 1: EMERGENCY (dist < 0.45m)
+#    -> ALWAYS react regardless of trajectory - collision imminent
+#    -> Backup if ped ahead, forward if ped behind/side
+#
+# PRIORITY 2: CRITICAL (dist < 0.60m)
+#    -> Active evasion if in_path (NO t_closest requirement!)
+#    -> Slow significantly if not in path
+#
+# PRIORITY 3: CAUTION (dist < 1.2m, in_path, t_closest > 0)
+#    -> Standard trajectory-based evasion
+#
+# PRIORITY 4: SAFE
+#    -> STOP/SLOW if close, pass through if far
 
 import rclpy
 from rclpy.node import Node
@@ -58,11 +63,13 @@ class AdaptiveSafety(Node):
         self.ped_radius = 0.25
         self.collision_radius = self.robot_radius + self.ped_radius  # 0.37m
 
-        # thresholds
-        self.in_path_threshold = 0.30    # robot is IN pedestrian's path
-        self.safe_threshold = 0.50       # clearly out of path (hysteresis)
+        # thresholds - CORRECTED for robot(0.12) + ped(0.25) radii
+        self.in_path_threshold = 0.40    # robot in path (accounts for both radii)
+        self.safe_threshold = 0.55       # clearly out of path (hysteresis)
         self.watch_dist = 1.2            # monitor distance
         self.backup_dist = 0.45          # backup if closer than this
+        self.emergency_dist = 0.45       # MUST react - collision imminent
+        self.critical_dist = 0.60        # active evasion required
 
         # velocity options
         self.forward_vel = 0.22
@@ -77,7 +84,12 @@ class AdaptiveSafety(Node):
         self.commit_start = 0
         self.commit_duration = 0.6  # longer commitment
 
-        self.get_logger().info('Adaptive safety v7.0: proper evasion (no stopping in path)')
+        # velocity smoothing (anti-jitter)
+        self.smooth_vx = 0.0
+        self.smooth_wz = 0.0
+        self.smooth_alpha = 0.4  # balance responsiveness vs smoothness
+
+        self.get_logger().info('Adaptive safety v8.0: distance-first safety')
 
     def odom_callback(self, msg):
         self.robot_vx = msg.twist.twist.linear.x
@@ -221,46 +233,101 @@ class AdaptiveSafety(Node):
             robot_in_path = perp_dist < self.in_path_threshold
 
         # ============================================================
-        # CASE 1: Robot IS in pedestrian's path -> MUST MOVE
-        # No stopping allowed! Robot must physically get out of the way.
+        # PRIORITY 1: EMERGENCY - collision imminent (dist < 0.45m)
+        # Distance overrides ALL trajectory analysis!
         # ============================================================
-        if robot_in_path and t_closest > 0:
+        if dist < self.emergency_dist:
+            if not self.evading:
+                self.evading = True
+                self.evade_start_time = now
+                self.evade_direction = self.compute_escape_steer(px, py, vx, vy)
+
+            if angle < 60:
+                # ped ahead - backup immediately
+                cmd.linear.x = self.backup_vel
+                cmd.angular.z = -0.5 if py > 0 else 0.5
+                self.get_logger().error(
+                    f'EMERGENCY-BACK: d={dist:.2f} perp={perp_dist:.2f} angle={angle:.0f}°'
+                )
+            else:
+                # ped to side/behind - go forward fast
+                cmd.linear.x = self.forward_vel
+                cmd.angular.z = self.evade_direction * 0.6
+                self.get_logger().error(
+                    f'EMERGENCY-FWD: d={dist:.2f} perp={perp_dist:.2f} angle={angle:.0f}°'
+                )
+
+        # ============================================================
+        # PRIORITY 2: CRITICAL - very close (dist < 0.60m)
+        # Don't require t_closest > 0 - react to proximity!
+        # ============================================================
+        elif dist < self.critical_dist:
+            if robot_in_path:
+                # in path at close range - evade regardless of t_closest
+                if not self.evading:
+                    self.evading = True
+                    self.evade_start_time = now
+                    self.evade_direction = self.compute_escape_steer(px, py, vx, vy)
+
+                if angle > 90:
+                    cmd.linear.x = self.forward_vel
+                    cmd.angular.z = self.evade_direction * 0.5
+                    self.get_logger().warn(
+                        f'CRITICAL-FWD(behind): d={dist:.2f} perp={perp_dist:.2f} angle={angle:.0f}°'
+                    )
+                elif angle > 40:
+                    cmd.linear.x = self.forward_vel
+                    cmd.angular.z = self.evade_direction * 0.7
+                    self.get_logger().warn(
+                        f'CRITICAL-FWD(side): d={dist:.2f} perp={perp_dist:.2f} angle={angle:.0f}°'
+                    )
+                else:
+                    cmd.linear.x = self.backup_vel
+                    cmd.angular.z = -0.5 if py > 0 else 0.5
+                    self.get_logger().warn(
+                        f'CRITICAL-BACK: d={dist:.2f} perp={perp_dist:.2f} angle={angle:.0f}°'
+                    )
+            else:
+                # not in path but still close - slow significantly, don't stop
+                self.evading = False
+                cmd.linear.x = self.last_cmd.linear.x * 0.25
+                cmd.angular.z = self.last_cmd.angular.z * 0.3
+                self.get_logger().info(
+                    f'CRITICAL-SLOW: d={dist:.2f} perp={perp_dist:.2f}'
+                )
+
+        # ============================================================
+        # PRIORITY 3: CAUTION - trajectory analysis OK at this range
+        # Robot IS in pedestrian's path -> MUST MOVE
+        # ============================================================
+        elif robot_in_path and t_closest > 0:
             if not self.evading:
                 self.evading = True
                 self.evade_start_time = now
                 self.evade_direction = self.compute_escape_steer(px, py, vx, vy)
                 self.commit_start = now
 
-            # Decide evasion action based on pedestrian position
             if angle > 90:
-                # Pedestrian is BEHIND - go FORWARD (away from them)
                 cmd.linear.x = self.forward_vel
                 cmd.angular.z = self.evade_direction * 0.5
                 self.get_logger().info(
                     f'EVADE-FWD(behind): d={dist:.2f} perp={perp_dist:.2f} angle={angle:.0f}°'
                 )
-
             elif angle > 40:
-                # Pedestrian is to the SIDE (40-90°) - FORWARD + strong steer
                 cmd.linear.x = self.forward_vel
-                cmd.angular.z = self.evade_direction * 0.8  # strong steer
+                cmd.angular.z = self.evade_direction * 0.8
                 self.get_logger().info(
                     f'EVADE-FWD(side): d={dist:.2f} perp={perp_dist:.2f} angle={angle:.0f}°'
                 )
-
             else:
-                # Pedestrian is AHEAD (<40°)
                 if dist < self.backup_dist or t_closest < 0.8:
-                    # Too close or not enough time - BACKUP
                     cmd.linear.x = self.backup_vel
-                    # Steer away while backing up (reverse direction)
                     steer = -0.5 if py > 0 else 0.5
                     cmd.angular.z = steer
                     self.get_logger().warn(
                         f'EVADE-BACK: d={dist:.2f} perp={perp_dist:.2f} angle={angle:.0f}°'
                     )
                 else:
-                    # Some distance - try FORWARD + aggressive steer
                     cmd.linear.x = self.forward_vel
                     cmd.angular.z = self.evade_direction * 0.8
                     self.get_logger().info(
@@ -268,21 +335,18 @@ class AdaptiveSafety(Node):
                     )
 
         # ============================================================
-        # CASE 2: Robot NOT in pedestrian's path -> STOP/SLOW
-        # Let the pedestrian pass safely.
+        # PRIORITY 4: NOT in path or ped departing -> STOP/SLOW
         # ============================================================
         else:
             self.evading = False
 
             if dist < 0.70:
-                # Close - stop completely
                 cmd.linear.x = 0.0
                 cmd.angular.z = 0.0
                 self.get_logger().info(
                     f'STOP: d={dist:.2f} perp={perp_dist:.2f} - letting ped pass'
                 )
             elif dist < self.watch_dist:
-                # Slow down
                 factor = max(0.2, (dist - 0.70) / 0.50)
                 cmd.linear.x = self.last_cmd.linear.x * min(factor, 0.4)
                 self.get_logger().info(
@@ -292,6 +356,13 @@ class AdaptiveSafety(Node):
         # Clamp velocities
         cmd.linear.x = max(-0.15, min(0.22, cmd.linear.x))
         cmd.angular.z = max(-1.2, min(1.2, cmd.angular.z))
+
+        # Apply smoothing to prevent jitter
+        self.smooth_vx = self.smooth_alpha * cmd.linear.x + (1 - self.smooth_alpha) * self.smooth_vx
+        self.smooth_wz = self.smooth_alpha * cmd.angular.z + (1 - self.smooth_alpha) * self.smooth_wz
+        cmd.linear.x = self.smooth_vx
+        cmd.angular.z = self.smooth_wz
+
         self.cmd_pub.publish(cmd)
 
 
