@@ -15,6 +15,7 @@ setup(
 	(os.path.join('share', package_name, 'resource'), glob('resource/*.urdf')),
 	(os.path.join('share', package_name, 'worlds'), glob('worlds/*.wbt')),
 	(os.path.join('share', package_name, 'config'), glob('config/*.yaml')),
+        (os.path.join('share', package_name, 'maps'), glob('maps/*.yaml') + glob('maps/*.pgm')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -29,8 +30,11 @@ setup(
     },
     entry_points={
         'console_scripts': [
-        'driver = human_aware_nav.driver:main', # 如果这行不在也加上，方便以后调试
-    	'human_detector = human_aware_nav.human_detector:main', # <--- 添加这一行
+        'driver = human_aware_nav.driver:main',
+    	'human_detector = human_aware_nav.human_detector:main',
+		'kalman_tracker = human_aware_nav.kalman_tracker:main',
+        'adaptive_safety = human_aware_nav.adaptive_safety:main',
+        'scan_filter = human_aware_nav.scan_filter:main',
         ],
     },
 )

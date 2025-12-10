@@ -1,9 +1,14 @@
 package.xml
 setup.cfg
 setup.py
+config/nav2_params.yaml
+config/slam_params.yaml
 human_aware_nav/__init__.py
+human_aware_nav/adaptive_safety.py
 human_aware_nav/driver.py
 human_aware_nav/human_detector.py
+human_aware_nav/kalman_tracker.py
+human_aware_nav/scan_filter.py
 human_aware_nav.egg-info/PKG-INFO
 human_aware_nav.egg-info/SOURCES.txt
 human_aware_nav.egg-info/dependency_links.txt
@@ -11,7 +16,10 @@ human_aware_nav.egg-info/entry_points.txt
 human_aware_nav.egg-info/requires.txt
 human_aware_nav.egg-info/top_level.txt
 human_aware_nav.egg-info/zip-safe
+launch/nav2_launch.py
 launch/robot_launch.py
+maps/test_map.pgm
+maps/test_map.yaml
 resource/human_aware_nav
 resource/my_robot.urdf
 worlds/human_env.wbt

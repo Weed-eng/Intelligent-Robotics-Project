@@ -1,4 +1,7 @@
 [console_scripts]
+adaptive_safety = human_aware_nav.adaptive_safety:main
 driver = human_aware_nav.driver:main
 human_detector = human_aware_nav.human_detector:main
+kalman_tracker = human_aware_nav.kalman_tracker:main
+scan_filter = human_aware_nav.scan_filter:main
 
