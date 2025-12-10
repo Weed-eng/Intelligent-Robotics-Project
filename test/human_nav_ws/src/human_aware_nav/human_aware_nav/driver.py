@@ -22,7 +22,7 @@ class MyRobotDriver(WebotsController):
             pass
         self.my_ros_node = rclpy.create_node('my_robot_driver_node')
 
-        self.my_ros_node.get_logger().info("Driver initialized with wheel encoder odometry")
+        self.my_ros_node.get_logger().info("driver initialized with wheel encoder odometry")
 
         # get devices
         self.lidar = self.__robot.getDevice('Lidar')
@@ -85,14 +85,14 @@ class MyRobotDriver(WebotsController):
         static_tf.transform.rotation.z = 0.0
         static_tf.transform.rotation.w = 1.0
         self.static_broadcaster.sendTransform(static_tf)
-        self.my_ros_node.get_logger().info("Published static TF: base_link -> lidar_link")
+        self.my_ros_node.get_logger().info("published static tf: base_link -> lidar_link")
 
     def __cmd_vel_callback(self, twist):
         # convert cmd_vel to wheel velocities using differential drive kinematics
         linear_v = twist.linear.x
         angular_w = twist.angular.z
 
-        MAX_WHEEL_VEL = 6.67  # TurtleBot3Burger motor limit (rad/s)
+        MAX_WHEEL_VEL = 6.67  # turtlebot3 burger motor limit (rad/s)
 
         left_vel = (linear_v - angular_w * WHEEL_SEPARATION / 2) / WHEEL_RADIUS
         right_vel = (linear_v + angular_w * WHEEL_SEPARATION / 2) / WHEEL_RADIUS
@@ -113,7 +113,7 @@ class MyRobotDriver(WebotsController):
         # (nav2 uses use_sim_time: false, so it queries TF at wall clock time)
         ros_stamp = self.my_ros_node.get_clock().now().to_msg()
 
-        # --- ENCODER-BASED ODOMETRY (accurate, not command-based) ---
+        # --- encoder-based odometry (accurate, not command-based) ---
         # read actual wheel positions from encoders
         left_pos = self.left_sensor.getValue() if self.left_sensor else 0.0
         right_pos = self.right_sensor.getValue() if self.right_sensor else 0.0
@@ -162,7 +162,7 @@ class MyRobotDriver(WebotsController):
         t.transform.rotation.w = qw
         self.tf_broadcaster.sendTransform(t)
 
-        # publish Odometry message
+        # publish odometry message
         odom = Odometry()
         odom.header.stamp = ros_stamp
         odom.header.frame_id = 'odom'
@@ -176,7 +176,7 @@ class MyRobotDriver(WebotsController):
         odom.pose.pose.orientation.w = qw
         self.odom_publisher.publish(odom)
 
-        # publish LaserScan
+        # publish laserscan
         if self.lidar and self.scan_publisher:
             ranges = self.lidar.getRangeImage()
             if ranges:
@@ -187,8 +187,8 @@ class MyRobotDriver(WebotsController):
                 num_ranges = len(ranges)
                 fov = self.lidar.getFov()
 
-                # Webots LiDAR scans opposite direction to ROS convention
-                # MUST reverse - SLAM map was built with reversed scans
+                # webots lidar scans opposite direction to ros convention
+                # must reverse - slam map was built with reversed scans
                 ranges_list = list(ranges)
                 ranges_list.reverse()
 

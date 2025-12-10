@@ -1,32 +1,23 @@
-# adaptive safety v8.3 - distance-first safety with aimed check
+# adaptive safety - predictive pedestrian avoidance layer
 #
-# v8.3 FIXES:
-#   1. Creep (0.03 m/s) instead of stop - satisfies progress checker
-#   2. Backup timeout (3.5s) - prevents backing into walls
-#   3. is_aimed_at_robot() - only backup if ped walking TOWARD robot
-#   4. Dodge direction commitment - prevents steering oscillation
-#   5. Faster backup (-0.15 m/s)
-#   6. State reset on no threat
-#   7. Reduced smoothing alpha (0.3)
+# distance-first priority with aimed check
+# only backup if ped is aimed at robot, if crossing perpendicular just yield
 #
-# KEY PRINCIPLE: DISTANCE IS KING + AIMED CHECK
-# Only backup if ped is AIMED at robot. If crossing perpendicular, YIELD.
+# priority 1 - emergency (dist < 0.45m)
+#    if aimed and angle < 60: backup (with timeout)
+#    else: yield (creep 0.03 m/s)
 #
-# PRIORITY 1: EMERGENCY (dist < 0.45m)
-#    -> If aimed AND angle < 60°: BACKUP (with timeout)
-#    -> Else: YIELD (creep 0.03 m/s)
+# priority 2 - critical (dist < 0.60m)
+#    if in_path and aimed and angle < 40: backup
+#    else if in_path: fwd + steer
+#    else: slow
 #
-# PRIORITY 2: CRITICAL (dist < 0.60m)
-#    -> If in_path AND aimed AND angle < 40°: BACKUP
-#    -> Else if in_path: FWD + steer
-#    -> Else: SLOW
+# priority 3 - caution (dist < 1.2m, in_path, t_closest > 0)
+#    if aimed: backup or fwd based on distance/time
+#    else: fwd + steer
 #
-# PRIORITY 3: CAUTION (dist < 1.2m, in_path, t_closest > 0)
-#    -> If aimed: BACKUP or FWD based on distance/time
-#    -> Else: FWD + steer
-#
-# PRIORITY 4: SAFE
-#    -> CREEP if close, SLOW if far
+# priority 4 - safe
+#    creep if close, slow if far
 
 import rclpy
 from rclpy.node import Node
@@ -68,39 +59,43 @@ class AdaptiveSafety(Node):
         self.ped_radius = 0.25
         self.collision_radius = self.robot_radius + self.ped_radius  # 0.37m
 
-        # thresholds - CORRECTED for robot(0.12) + ped(0.25) radii
-        self.in_path_threshold = 0.40    # robot in path (accounts for both radii)
+        # thresholds
+        self.in_path_threshold = 0.35 
         self.safe_threshold = 0.55       # clearly out of path (hysteresis)
         self.watch_dist = 1.2            # monitor distance
         self.backup_dist = 0.45          # backup if closer than this
-        self.emergency_dist = 0.45       # MUST react - collision imminent
+        self.emergency_dist = 0.45       # must react - collision imminent
         self.critical_dist = 0.60        # active evasion required
 
         # velocity options
-        self.forward_vel = 0.22
-        self.backup_vel = -0.15  # v8.3: faster backup
-        self.creep_vel = 0.03    # v8.3: minimum velocity for progress checker
+        self.forward_vel = 0.18 
+        self.backup_vel = -0.15
+        self.creep_vel = 0.03
 
         # evasion state (hysteresis)
         self.evading = False
         self.evade_start_time = 0
         self.evade_direction = 0  # angular velocity direction
-
-        # v8.3: backup timeout to prevent backing into walls
         self.backup_start_time = 0.0
         self.backup_timeout = 3.5  # seconds
-
-        # v8.3: dodge direction commitment to prevent oscillation
         self.dodge_direction = 0.0
         self.dodge_commit_time = 0.0
-        self.dodge_timeout = 3.0  # stay committed for 3 seconds
+        self.dodge_timeout = 3.0  # stay committed to an actionfor 3 seconds
+        self.current_action = None  # 'BACKUP', 'YIELD', 'EVADE', 'SLOW', 'CREEP'
+        self.action_start_time = 0.0
+        self.action_min_duration = 0.6
+        self.last_threat_dist = None
+        self.last_threat_time = 0.0
+        self.was_aimed = False
 
         # velocity smoothing (anti-jitter)
         self.smooth_vx = 0.0
         self.smooth_wz = 0.0
-        self.smooth_alpha = 0.3  # v8.3: faster response (was 0.4)
+        self.smooth_alpha = 0.55
+        self.last_safe_vx = 0.0
+        self.last_safe_wz = 0.0
 
-        self.get_logger().info('Adaptive safety v8.3: distance-first + aimed check')
+        self.get_logger().info('Adaptive safety v8.5: continuous jitter fixes')
 
     def odom_callback(self, msg):
         self.robot_vx = msg.twist.twist.linear.x
@@ -128,86 +123,95 @@ class AdaptiveSafety(Node):
         self.last_cmd = msg
         self.last_cmd_time = time.time()
 
+    # perpendicular distance from robot to pedestrian's trajectory line
     def perp_dist_to_trajectory(self, px, py, vx, vy):
-        """Perpendicular distance from robot to pedestrian's trajectory line."""
         speed = math.hypot(vx, vy)
         if speed < 0.05:
             return math.hypot(px, py)
         return abs(px * vy - py * vx) / speed
 
+    # time until pedestrian reaches closest point to robot
     def time_to_closest_point(self, px, py, vx, vy):
-        """Time until pedestrian reaches closest point to robot."""
         speed_sq = vx * vx + vy * vy
         if speed_sq < 0.001:
             return float('inf')
         return -(px * vx + py * vy) / speed_sq
 
+    # compute which direction to steer to escape pedestrian's path
+    # returns angular velocity: positive = turn left, negative = turn right
+    # goal: move perpendicular away from pedestrian's trajectory
     def compute_escape_steer(self, px, py, vx, vy):
-        """
-        Compute which direction to steer to escape pedestrian's path.
-        Returns angular velocity: positive = turn left, negative = turn right.
-        Goal: move perpendicular AWAY from pedestrian's trajectory.
-        """
         speed = math.hypot(vx, vy)
         if speed < 0.05:
-            # Pedestrian stationary - steer away from their position
+            # pedestrian stationary - steer away from their position
             return -0.7 if py > 0 else 0.7
 
-        # Cross product determines which side of trajectory we're on
-        # cross > 0: robot is LEFT of pedestrian's trajectory
-        # cross < 0: robot is RIGHT of pedestrian's trajectory
+        # cross product determines which side of trajectory we're on
+        # cross > 0: robot is left of pedestrian's trajectory
+        # cross < 0: robot is right of pedestrian's trajectory
         cross = px * vy - py * vx
 
-        # Steer to increase distance from trajectory
-        # If we're left of trajectory, go more left (positive angular)
-        # If we're right of trajectory, go more right (negative angular)
+        # steer to increase distance from trajectory
+        # if we're left of trajectory, go more left (positive angular)
+        # if we're right of trajectory, go more right (negative angular)
         return 0.7 if cross > 0 else -0.7
 
+    # check if pedestrian is walking toward robot position
+    # uses hysteresis to prevent rapid aimed/not-aimed oscillation
     def is_aimed_at_robot(self, px, py, vx, vy):
-        """
-        v8.3: Check if pedestrian is walking TOWARD robot position.
-        Returns True if ped velocity has significant component toward robot.
-        Used to distinguish:
-        - Ped AIMED at robot -> robot IS IN their path -> EVADE/BACKUP
-        - Ped NOT aimed -> crossing perpendicular -> YIELD/WAIT
-        """
         ped_speed = math.hypot(vx, vy)
         if ped_speed < 0.05:
+            self.was_aimed = False
             return False  # stationary ped - not aimed
 
         dist = math.hypot(px, py)
         if dist < 0.01:
+            self.was_aimed = True
             return True  # at collision
 
         # dot(velocity, -position) > 0 means walking toward robot
         toward_robot = vx * (-px) + vy * (-py)
         aimed_score = toward_robot / (dist * ped_speed)
 
-        # threshold: ~70° cone (cos(70°) ≈ 0.34, use 0.3 for margin)
-        return aimed_score > 0.3
+        # рysteresis to prevent oscillation
+        if self.was_aimed:
+            self.was_aimed = aimed_score > 0.15
+        else:
+            self.was_aimed = aimed_score > 0.45
+
+        return self.was_aimed
 
     def get_dodge_steer(self, py, now):
-        """v8.3: Get committed dodge direction to prevent oscillation."""
         if self.dodge_direction == 0 or (now - self.dodge_commit_time) > self.dodge_timeout:
             self.dodge_direction = -1.0 if py > 0 else 1.0
             self.dodge_commit_time = now
         return self.dodge_direction
 
+    def set_action(self, new_action, now):
+        if self.current_action == new_action:
+            return True 
+
+        if self.current_action is not None:
+            if (now - self.action_start_time) < self.action_min_duration:
+                return False
+
+        self.current_action = new_action
+        self.action_start_time = now
+        return True
+
     def safety_callback(self):
         now = time.time()
 
-        # No nav2 command - stop
         if now - self.last_cmd_time > 0.5:
             self.cmd_pub.publish(Twist())
             self.evading = False
             return
 
-        # Start with nav2 command
         cmd = Twist()
         cmd.linear.x = self.last_cmd.linear.x
         cmd.angular.z = self.last_cmd.angular.z
 
-        # Find the most dangerous pedestrian
+        # find the most dangerous pedestrian
         threat = None
         min_dist = float('inf')
 
@@ -216,32 +220,32 @@ class AdaptiveSafety(Node):
             vx, vy = p['vx'], p['vy']
             dist = math.hypot(px, py)
 
-            # Skip if inside robot or too far
+            # skip if inside robot or too far
             if dist < self.robot_radius or dist > self.watch_dist:
                 continue
 
-            # Pedestrian angle (0° = ahead, 90° = side, 180° = behind)
+            # pedestrian angle (0° = ahead, 90° = side, 180° = behind)
             angle = abs(math.degrees(math.atan2(py, px)))
 
-            # Time to closest approach
+            # time to closest approach
             t_closest = self.time_to_closest_point(px, py, vx, vy)
 
-            # Skip departing pedestrians (already passed) unless very close
+            # skip departing pedestrians (already passed) unless very close
             if t_closest < 0 and dist > self.backup_dist:
                 continue
 
-            # Skip pedestrians behind that are moving away
+            # skip pedestrians behind that are moving away
             if angle > 120:
-                # Check if approaching
+                # check if approaching
                 rel_vx = vx - self.robot_vx
                 approaching = (px * rel_vx + py * vy) < -0.01
                 if not approaching:
                     continue
 
-            # Calculate perpendicular distance to trajectory
+            # calculate perpendicular distance to trajectory
             perp_dist = self.perp_dist_to_trajectory(px, py, vx, vy)
 
-            # Select closest threat
+            # select closest threat
             if dist < min_dist:
                 min_dist = dist
                 threat = {
@@ -250,22 +254,28 @@ class AdaptiveSafety(Node):
                     't_closest': t_closest
                 }
 
-        # No threat - pass through nav2 command
+        # no threat - pass through nav2 command
         if threat is None:
-            # v8.3: Reset all state when no threat
             if self.evading and (now - self.evade_start_time) > 1.0:
                 self.evading = False
+            
             self.backup_start_time = 0.0
-            # Reset dodge direction after extended period of no use
+
+            # reset dodge direction after extended period of no use
             if self.dodge_direction != 0 and (now - self.dodge_commit_time) > 5.0:
                 self.dodge_direction = 0.0
-            # Reset smoothing to nav2 command
+
+            self.last_threat_dist = None
+            self.current_action = None
+            self.was_aimed = False
+
+            # reset smoothing to nav2 command
             self.smooth_vx = cmd.linear.x
             self.smooth_wz = cmd.angular.z
             self.cmd_pub.publish(cmd)
             return
 
-        # Extract threat info
+        # extract threat info
         px, py = threat['px'], threat['py']
         vx, vy = threat['vx'], threat['vy']
         dist = threat['dist']
@@ -273,28 +283,34 @@ class AdaptiveSafety(Node):
         perp_dist = threat['perp_dist']
         t_closest = threat['t_closest']
 
-        # Determine if robot is in pedestrian's path
-        # Use hysteresis: enter evade at 0.30m, exit at 0.50m
+        # smooth threat distance to handle tracker noise/ID switching
+        if self.last_threat_dist is not None and (now - self.last_threat_time) < 0.2:
+            # if distance jumped > 0.3m in 200ms, likely noise - use average
+            if abs(dist - self.last_threat_dist) > 0.3:
+                dist = (dist + self.last_threat_dist) / 2
+        self.last_threat_dist = dist
+        self.last_threat_time = now
+
+        # determine if robot is in pedestrian's path
+        # use hysteresis: enter evade at 0.30m, exit at 0.50m
         if self.evading:
             robot_in_path = perp_dist < self.safe_threshold
         else:
             robot_in_path = perp_dist < self.in_path_threshold
 
-        # ============================================================
-        # PRIORITY 1: EMERGENCY - collision imminent (dist < 0.45m)
-        # v8.3: Only backup if ped is AIMED at robot
-        # ============================================================
+        # --- priority 1: emergency - collision imminent (dist < 0.45m) ---
         if dist < self.emergency_dist:
-            if not self.evading:
+
+            if not self.evading or (now - self.evade_start_time) > 2.0:
                 self.evading = True
                 self.evade_start_time = now
                 self.evade_direction = self.compute_escape_steer(px, py, vx, vy)
 
             aimed = self.is_aimed_at_robot(px, py, vx, vy)
 
-            # v8.3: Check backup timeout first
+            # check backup timeout first
             if self.backup_start_time > 0 and (now - self.backup_start_time) > self.backup_timeout:
-                # Timeout - force forward to satisfy progress checker
+                # timeout - force forward to satisfy progress checker
                 cmd.linear.x = self.forward_vel * 0.8
                 cmd.angular.z = self.get_dodge_steer(py, now) * 0.8
                 self.backup_start_time = 0.0
@@ -321,42 +337,40 @@ class AdaptiveSafety(Node):
             else:
                 # ped to side/behind - go forward fast
                 cmd.linear.x = self.forward_vel
-                cmd.angular.z = self.evade_direction * 0.6
+                cmd.angular.z = self.evade_direction * 0.5 
                 self.backup_start_time = 0.0
                 self.get_logger().error(
                     f'EMERGENCY-FWD: d={dist:.2f} perp={perp_dist:.2f} angle={angle:.0f}°'
                 )
 
-        # ============================================================
-        # PRIORITY 2: CRITICAL - very close (dist < 0.60m)
-        # v8.3: Only backup if aimed AND angle < 40°
-        # ============================================================
+        # --- priority 2: critical - very close (dist < 0.60m) ---
         elif dist < self.critical_dist:
             aimed = self.is_aimed_at_robot(px, py, vx, vy)
 
             if robot_in_path:
                 # in path at close range - evade regardless of t_closest
-                if not self.evading:
+                # only recompute evade_direction if not evading or if stale
+                if not self.evading or (now - self.evade_start_time) > 2.0:
                     self.evading = True
                     self.evade_start_time = now
                     self.evade_direction = self.compute_escape_steer(px, py, vx, vy)
 
                 if angle > 90:
                     cmd.linear.x = self.forward_vel
-                    cmd.angular.z = self.evade_direction * 0.5
+                    cmd.angular.z = self.evade_direction * 0.4
                     self.backup_start_time = 0.0
                     self.get_logger().warn(
                         f'CRITICAL-FWD(behind): d={dist:.2f} perp={perp_dist:.2f} angle={angle:.0f}°'
                     )
                 elif angle > 40:
                     cmd.linear.x = self.forward_vel
-                    cmd.angular.z = self.evade_direction * 0.7
+                    cmd.angular.z = self.evade_direction * 0.5  
                     self.backup_start_time = 0.0
                     self.get_logger().warn(
                         f'CRITICAL-FWD(side): d={dist:.2f} perp={perp_dist:.2f} angle={angle:.0f}°'
                     )
                 elif aimed:
-                    # v8.3: head-on AND aimed - backup with timeout check
+                    # head-on AND aimed - backup with timeout check
                     if self.backup_start_time > 0 and (now - self.backup_start_time) > self.backup_timeout:
                         cmd.linear.x = self.forward_vel * 0.8
                         cmd.angular.z = self.get_dodge_steer(py, now) * 0.8
@@ -373,7 +387,7 @@ class AdaptiveSafety(Node):
                             f'CRITICAL-BACK: d={dist:.2f} perp={perp_dist:.2f} angle={angle:.0f}°'
                         )
                 else:
-                    # v8.3: head-on but NOT aimed - YIELD instead of backup
+                    # head-on but NOT aimed - YIELD instead of backup
                     cmd.linear.x = self.creep_vel
                     cmd.angular.z = 0.0
                     self.backup_start_time = 0.0
@@ -384,18 +398,16 @@ class AdaptiveSafety(Node):
                 # not in path but still close - slow significantly
                 self.evading = False
                 self.backup_start_time = 0.0
-                cmd.linear.x = max(self.creep_vel, self.last_cmd.linear.x * 0.25)
+                cmd.linear.x = max(0.06, self.last_cmd.linear.x * 0.25)  # v8.5: raised min from 0.03
                 cmd.angular.z = self.last_cmd.angular.z * 0.3
                 self.get_logger().info(
                     f'CRITICAL-SLOW: d={dist:.2f} perp={perp_dist:.2f}'
                 )
 
-        # ============================================================
-        # PRIORITY 3: CAUTION - trajectory analysis OK at this range
-        # v8.3: Only backup if aimed
-        # ============================================================
+        # --- priority 3: caution - trajectory analysis ok at this range ---
         elif robot_in_path and t_closest > 0:
-            if not self.evading:
+            # only recompute evade_direction if not evading or if stale
+            if not self.evading or (now - self.evade_start_time) > 2.0:
                 self.evading = True
                 self.evade_start_time = now
                 self.evade_direction = self.compute_escape_steer(px, py, vx, vy)
@@ -404,20 +416,20 @@ class AdaptiveSafety(Node):
 
             if angle > 90:
                 cmd.linear.x = self.forward_vel
-                cmd.angular.z = self.evade_direction * 0.5
+                cmd.angular.z = self.evade_direction * 0.4 
                 self.backup_start_time = 0.0
                 self.get_logger().info(
                     f'EVADE-FWD(behind): d={dist:.2f} perp={perp_dist:.2f} angle={angle:.0f}°'
                 )
             elif angle > 40:
                 cmd.linear.x = self.forward_vel
-                cmd.angular.z = self.evade_direction * 0.8
+                cmd.angular.z = self.evade_direction * 0.6 
                 self.backup_start_time = 0.0
                 self.get_logger().info(
                     f'EVADE-FWD(side): d={dist:.2f} perp={perp_dist:.2f} angle={angle:.0f}°'
                 )
             elif aimed and (dist < self.backup_dist or t_closest < 0.8):
-                # v8.3: Only backup if aimed AND close/imminent
+            
                 if self.backup_start_time > 0 and (now - self.backup_start_time) > self.backup_timeout:
                     cmd.linear.x = self.forward_vel * 0.8
                     cmd.angular.z = self.get_dodge_steer(py, now) * 0.8
@@ -434,7 +446,7 @@ class AdaptiveSafety(Node):
                         f'EVADE-BACK: d={dist:.2f} perp={perp_dist:.2f} angle={angle:.0f}°'
                     )
             elif not aimed:
-                # v8.3: NOT aimed - just yield, don't backup
+                # not aimed - just yield, don't backup
                 cmd.linear.x = self.creep_vel
                 cmd.angular.z = 0.0
                 self.backup_start_time = 0.0
@@ -443,22 +455,19 @@ class AdaptiveSafety(Node):
                 )
             else:
                 cmd.linear.x = self.forward_vel
-                cmd.angular.z = self.evade_direction * 0.8
+                cmd.angular.z = self.evade_direction * 0.6 
                 self.backup_start_time = 0.0
                 self.get_logger().info(
                     f'EVADE-FWD(ahead): d={dist:.2f} perp={perp_dist:.2f} t={t_closest:.1f}s'
                 )
 
-        # ============================================================
-        # PRIORITY 4: NOT in path or ped departing -> CREEP/SLOW
-        # v8.3: Use CREEP instead of STOP to satisfy progress checker
-        # ============================================================
+        # --- priority 4: not in path or ped departing -> creep/slow ---
         else:
             self.evading = False
             self.backup_start_time = 0.0
 
             if dist < 0.70:
-                # v8.3: CREEP instead of STOP - satisfies progress checker
+                # creep instead of stop - satisfies progress checker
                 cmd.linear.x = self.creep_vel
                 cmd.angular.z = 0.0
                 self.get_logger().info(
@@ -466,16 +475,36 @@ class AdaptiveSafety(Node):
                 )
             elif dist < self.watch_dist:
                 factor = max(0.2, (dist - 0.70) / 0.50)
-                cmd.linear.x = max(self.creep_vel, self.last_cmd.linear.x * min(factor, 0.4))
+                cmd.linear.x = max(0.06, self.last_cmd.linear.x * min(factor, 0.4))  # v8.5: raised min from 0.03
                 self.get_logger().info(
                     f'SLOW: d={dist:.2f} perp={perp_dist:.2f}'
                 )
 
-        # Clamp velocities
-        cmd.linear.x = max(-0.15, min(0.22, cmd.linear.x))
+        # determine action category from computed velocities
+        if cmd.linear.x < 0:
+            intended_action = 'BACKUP'
+        elif cmd.linear.x >= self.forward_vel - 0.02:
+            intended_action = 'EVADE'
+        elif cmd.linear.x <= self.creep_vel + 0.02:
+            intended_action = 'CREEP'
+        else:
+            intended_action = 'SLOW'
+
+        # check if action switch is allowed
+        if not self.set_action(intended_action, now):
+            # switch denied - use previous safe velocities
+            cmd.linear.x = self.last_safe_vx
+            cmd.angular.z = self.last_safe_wz
+        else:
+            # switch allowed - save these as new safe velocities
+            self.last_safe_vx = cmd.linear.x
+            self.last_safe_wz = cmd.angular.z
+
+        # clamp velocities
+        cmd.linear.x = max(-0.15, min(0.18, cmd.linear.x))  # v8.5: reduced from 0.22
         cmd.angular.z = max(-1.2, min(1.2, cmd.angular.z))
 
-        # Apply smoothing to prevent jitter
+        # apply smoothing to prevent jitter
         self.smooth_vx = self.smooth_alpha * cmd.linear.x + (1 - self.smooth_alpha) * self.smooth_vx
         self.smooth_wz = self.smooth_alpha * cmd.angular.z + (1 - self.smooth_alpha) * self.smooth_wz
         cmd.linear.x = self.smooth_vx

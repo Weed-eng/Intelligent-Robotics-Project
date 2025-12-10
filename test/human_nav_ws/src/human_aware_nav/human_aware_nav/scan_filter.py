@@ -1,9 +1,8 @@
-# scan filter - removes MOVING pedestrians from lidar scan for AMCL
+# scan filter - removes moving pedestrians from lidar scan for amcl
 # uses tracked_objects (confirmed moving objects from kalman tracker)
 #
-# CRITICAL: only filter confirmed MOVING objects, NOT static obstacles
-# static obstacles (walls, boxes) must remain visible to AMCL for localization
-# no startup fallback - ensures AMCL always has full static environment
+# only filter confirmed moving objects, not static obstacles
+# static obstacles (walls, boxes) must remain visible to amcl for localization
 
 import rclpy
 from rclpy.node import Node
@@ -34,18 +33,17 @@ class ScanFilter(Node):
         # filter radius - just enough to cover pedestrian body
         self.filter_radius = 0.30  # reduced to be more precise
 
-        # NO startup fallback - only filter confirmed MOVING objects
-        # this ensures AMCL always sees static obstacles for localization
+        # no startup fallback - only filter confirmed moving objects
+        # this ensures amcl always sees static obstacles for localization
 
         self.log_counter = 0
 
         self.get_logger().info(
-            'Scan filter: filtering MOVING objects only (tracked_objects), '
-            f'radius={self.filter_radius}m'
+            f'scan filter: filtering moving objects only, radius={self.filter_radius}m'
         )
 
+    # receive tracked moving objects from kalman tracker
     def tracks_callback(self, msg: MarkerArray):
-        """Receive tracked MOVING objects from kalman tracker."""
         self.tracked_objects = []
         for marker in msg.markers:
             if marker.ns == 'tracked_objects':
@@ -58,8 +56,7 @@ class ScanFilter(Node):
         now = time.time()
         track_age = now - self.last_track_time
 
-        # only filter if we have fresh tracked MOVING objects
-        # no startup fallback - AMCL must always see static obstacles
+        # only filter if we have fresh tracked moving objects
         if track_age > self.track_timeout or not self.tracked_objects:
             self.filtered_pub.publish(msg)
             return

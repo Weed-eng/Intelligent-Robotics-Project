@@ -6,8 +6,8 @@ import numpy as np
 import time
 
 
+# single object track with kalman filter
 class KalmanTrack:
-    """Single object track with Kalman filter."""
     _next_id = 0
 
     def __init__(self, x, y):
@@ -34,8 +34,8 @@ class KalmanTrack:
         # measurement noise
         self.R = np.eye(2) * 0.05
 
+    # predict next state
     def predict(self, dt):
-        """Predict next state."""
         dt = min(dt, 0.5)  # cap dt to avoid explosion
         F = np.array([
             [1, 0, dt, 0],
@@ -46,8 +46,8 @@ class KalmanTrack:
         self.x = F @ self.x
         self.P = F @ self.P @ F.T + self.Q
 
+    # update with measurement
     def update(self, mx, my):
-        """Update with measurement."""
         z = np.array([[mx], [my]])
         y = z - self.H @ self.x
         S = self.H @ self.P @ self.H.T + self.R
@@ -58,8 +58,8 @@ class KalmanTrack:
         self.hits += 1
         self.misses = 0
 
+    # track wasn't associated this frame
     def mark_missed(self):
-        """Track wasn't associated this frame."""
         self.misses += 1
 
     @property
@@ -75,9 +75,8 @@ class KalmanTrack:
         return np.hypot(self.x[2, 0], self.x[3, 0])
 
 
+# multi-object tracker using kalman filters
 class KalmanTracker(Node):
-    """Multi-object tracker using Kalman filters."""
-
     def __init__(self):
         super().__init__('kalman_tracker')
 
@@ -95,7 +94,7 @@ class KalmanTracker(Node):
         self.max_age = 2.0          # remove tracks older than this (seconds)
         self.min_speed = 0.12       # filter out very slow/stationary objects
 
-        self.get_logger().info("Kalman tracker started (improved)")
+        self.get_logger().info("kalman tracker started")
 
     def measurement_callback(self, msg):
         now = time.time()
@@ -112,7 +111,7 @@ class KalmanTracker(Node):
             dt = now - track.last_update_time
             track.predict(dt)
 
-        # associate measurements to tracks using Hungarian-like greedy
+        # associate measurements to tracks using greedy assignment
         used_tracks = set()
         used_meas = set()
 

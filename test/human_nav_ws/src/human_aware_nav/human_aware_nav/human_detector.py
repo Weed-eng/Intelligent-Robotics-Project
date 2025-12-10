@@ -17,7 +17,7 @@ class HumanDetector(Node):
         self.marker_publisher = self.create_publisher(MarkerArray, '/detected_humans', 10)
         
         self.cluster_threshold = 0.25  # more realistic than 0.5
-        self.get_logger().info("Human detector started – waiting for /scan...")
+        self.get_logger().info("human detector started, waiting for /scan")
 
     def scan_callback(self, msg):
         clusters = []
