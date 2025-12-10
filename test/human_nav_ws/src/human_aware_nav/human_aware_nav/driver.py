@@ -4,8 +4,6 @@ from geometry_msgs.msg import Twist, TransformStamped
 from sensor_msgs.msg import LaserScan
 from nav_msgs.msg import Odometry
 from webots_ros2_driver.webots_controller import WebotsController
-from rclpy.time import Time
-from rclpy.duration import Duration
 from tf2_ros import TransformBroadcaster, StaticTransformBroadcaster
 
 # turtlebot3 burger specs
@@ -23,10 +21,6 @@ class MyRobotDriver(WebotsController):
         except Exception:
             pass
         self.my_ros_node = rclpy.create_node('my_robot_driver_node')
-
-        # time bridging - map sim time to wall clock for slam_toolbox compatibility
-        self.system_start_time = self.my_ros_node.get_clock().now()
-        self.sim_start_time = self.__robot.getTime()
 
         self.my_ros_node.get_logger().info("Driver initialized with wheel encoder odometry")
 
@@ -115,12 +109,9 @@ class MyRobotDriver(WebotsController):
         if hasattr(self, 'my_ros_node'):
             rclpy.spin_once(self.my_ros_node, timeout_sec=0)
 
-        current_sim_time = self.__robot.getTime()
-
-        # time bridging: map simulation time to wall clock
-        elapsed_sim_seconds = current_sim_time - self.sim_start_time
-        current_ros_time = self.system_start_time + Duration(seconds=elapsed_sim_seconds)
-        ros_stamp = current_ros_time.to_msg()
+        # use wall clock for TF timestamps - ensures nav2 can always look up transforms
+        # (nav2 uses use_sim_time: false, so it queries TF at wall clock time)
+        ros_stamp = self.my_ros_node.get_clock().now().to_msg()
 
         # --- ENCODER-BASED ODOMETRY (accurate, not command-based) ---
         # read actual wheel positions from encoders

@@ -18,10 +18,6 @@ human_aware_nav.egg-info/top_level.txt
 human_aware_nav.egg-info/zip-safe
 launch/nav2_launch.py
 launch/robot_launch.py
-maps/arena_map.pgm
-maps/arena_map.yaml
-maps/my_map.pgm
-maps/my_map.yaml
 maps/test_map.pgm
 maps/test_map.yaml
 resource/human_aware_nav
