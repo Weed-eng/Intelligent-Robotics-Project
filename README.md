@@ -81,21 +81,31 @@ export WEBOTS_HOME=/Applications/Webots.app
 python3 local_simulation_server.py
 ```
 
-**Terminal 2: Robot Driver (Docker)**
+**Terminal 2: Docker + Robot Driver**
 ```bash
-ros2 launch human_aware_nav robot_launch.py
+cd <project-root>
+docker run --rm -it \
+    -v ./webots_shared:/shared \
+    -v ./test/human_nav_ws:/ros2_ws \
+    -e WEBOTS_SHARED_FOLDER=$(pwd)/webots_shared:/shared \
+    -p 8765:8765 -p 2000:2000 \
+    ros2-webots bash
+```
+Inside Docker:
+```bash
+source /opt/ros/humble/setup.bash && cd /ros2_ws && colcon build --symlink-install && source install/setup.bash && ros2 launch human_aware_nav robot_launch.py
 ```
 
 **Terminal 3: Teleop (Docker exec)**
 ```bash
-ros2 run teleop_twist_keyboard teleop_twist_keyboard
+docker exec -it $(docker ps -q) bash -c "source /opt/ros/humble/setup.bash && ros2 run teleop_twist_keyboard teleop_twist_keyboard"
 ```
 
 ### Linux
 
 **Terminal 1: Robot Driver**
 ```bash
-ros2 launch human_aware_nav robot_launch.py
+cd ~/human_nav_ws && colcon build --symlink-install && source install/setup.bash && ros2 launch human_aware_nav robot_launch.py
 ```
 
 **Terminal 2: Teleop**
@@ -109,7 +119,7 @@ Controls: `i` = forward, `k` = stop, `j` = turn left, `l` = turn right, `,` = ba
 
 ## SLAM Mapping Mode
 
-Create a new map of the environment.
+Create a new map of the environment. Use the static world (no pedestrians) for clean mapping.
 
 ### macOS
 
@@ -120,24 +130,34 @@ export WEBOTS_HOME=/Applications/Webots.app
 python3 local_simulation_server.py
 ```
 
-**Terminal 2: Robot Driver (Docker)**
+**Terminal 2: Docker + Robot Driver**
 ```bash
-ros2 launch human_aware_nav robot_launch.py
+cd <project-root>
+docker run --rm -it \
+    -v ./webots_shared:/shared \
+    -v ./test/human_nav_ws:/ros2_ws \
+    -e WEBOTS_SHARED_FOLDER=$(pwd)/webots_shared:/shared \
+    -p 8765:8765 -p 2000:2000 \
+    ros2-webots bash
+```
+Inside Docker:
+```bash
+source /opt/ros/humble/setup.bash && cd /ros2_ws && colcon build --symlink-install && source install/setup.bash && ros2 launch human_aware_nav robot_launch.py world:=human_env_static.wbt
 ```
 
 **Terminal 3: SLAM (Docker exec)**
 ```bash
-ros2 launch slam_toolbox online_async_launch.py use_sim_time:=false
+docker exec -it $(docker ps -q) bash -c "source /opt/ros/humble/setup.bash && ros2 launch slam_toolbox online_async_launch.py slam_params_file:=/ros2_ws/src/human_aware_nav/config/slam_params.yaml"
 ```
 
 **Terminal 4: Teleop (Docker exec)**
 ```bash
-ros2 run teleop_twist_keyboard teleop_twist_keyboard
+docker exec -it $(docker ps -q) bash -c "source /opt/ros/humble/setup.bash && ros2 run teleop_twist_keyboard teleop_twist_keyboard"
 ```
 
 **Terminal 5: Foxglove Bridge (Docker exec, optional)**
 ```bash
-ros2 launch foxglove_bridge foxglove_bridge_launch.xml port:=8765
+docker exec -it $(docker ps -q) bash -c "source /opt/ros/humble/setup.bash && ros2 launch foxglove_bridge foxglove_bridge_launch.xml port:=8765"
 ```
 
 Open Foxglove Studio, connect to `ws://localhost:8765`, add Map panel.
@@ -146,12 +166,12 @@ Open Foxglove Studio, connect to `ws://localhost:8765`, add Map panel.
 
 **Terminal 1: Robot Driver**
 ```bash
-ros2 launch human_aware_nav robot_launch.py
+cd ~/human_nav_ws && colcon build --symlink-install && source install/setup.bash && ros2 launch human_aware_nav robot_launch.py world:=human_env_static.wbt
 ```
 
 **Terminal 2: SLAM**
 ```bash
-ros2 launch slam_toolbox online_async_launch.py use_sim_time:=false
+ros2 launch slam_toolbox online_async_launch.py slam_params_file:=~/human_nav_ws/src/human_aware_nav/config/slam_params.yaml
 ```
 
 **Terminal 3: Teleop**
@@ -166,9 +186,26 @@ ros2 launch foxglove_bridge foxglove_bridge_launch.xml port:=8765
 
 ### Saving the Map
 
-Once mapping is complete:
+macOS (Docker exec):
 ```bash
-ros2 run nav2_map_server map_saver_cli -f /ros2_ws/src/human_aware_nav/maps/<map_name>
+docker exec -it $(docker ps -q) bash -c "source /opt/ros/humble/setup.bash && ros2 run nav2_map_server map_saver_cli -f /ros2_ws/src/human_aware_nav/maps/<map_name>"
+```
+
+Linux:
+```bash
+ros2 run nav2_map_server map_saver_cli -f ~/human_nav_ws/src/human_aware_nav/maps/<map_name>
+```
+
+### World Files
+
+| World File | Description |
+|------------|-------------|
+| `human_env.wbt` | Full environment with 8 walking pedestrians (default) |
+| `human_env_static.wbt` | Static environment without pedestrians (for SLAM) |
+
+Use `world:=<filename>` argument to select:
+```bash
+ros2 launch human_aware_nav robot_launch.py world:=human_env_static.wbt
 ```
 
 ---
@@ -215,7 +252,7 @@ cd <project-root>
 docker exec -it $(docker ps -q) bash -c "source /opt/ros/humble/setup.bash && ros2 action send_goal /navigate_to_pose nav2_msgs/action/NavigateToPose \"{pose: {header: {frame_id: 'map'}, pose: {position: {x: 0.0, y: -2.6, z: 0.0}, orientation: {w: 1.0}}}}\""
 ```
 
-### Manual Launch - macOS (7 Terminals, +1 Optional)
+### Manual Launch - macOS (8 Terminals, +1 Optional)
 
 **Terminal 1: Bridge Server**
 ```bash
@@ -249,28 +286,33 @@ docker exec -it $(docker ps -q) bash -c "source /opt/ros/humble/setup.bash && so
 docker exec -it $(docker ps -q) bash -c "source /opt/ros/humble/setup.bash && source /ros2_ws/install/setup.bash && ros2 run human_aware_nav kalman_tracker"
 ```
 
-**Terminal 5: Nav2 Stack (Docker exec)**
+**Terminal 5: Scan Filter (Docker exec)**
+```bash
+docker exec -it $(docker ps -q) bash -c "source /opt/ros/humble/setup.bash && source /ros2_ws/install/setup.bash && ros2 run human_aware_nav scan_filter"
+```
+
+**Terminal 6: Nav2 Stack (Docker exec)**
 ```bash
 docker exec -it $(docker ps -q) bash -c "source /opt/ros/humble/setup.bash && cd /ros2_ws && source install/setup.bash && ros2 launch human_aware_nav nav2_launch.py"
 ```
 
-**Terminal 6: Adaptive Safety (Docker exec)**
+**Terminal 7: Adaptive Safety (Docker exec)**
 ```bash
 docker exec -it $(docker ps -q) bash -c "source /opt/ros/humble/setup.bash && source /ros2_ws/install/setup.bash && ros2 run human_aware_nav adaptive_safety"
 ```
 
-**Terminal 7: Foxglove Bridge (Docker exec, optional)**
+**Terminal 8: Foxglove Bridge (Docker exec, optional)**
 ```bash
 docker exec -it $(docker ps -q) bash -c "source /opt/ros/humble/setup.bash && ros2 launch foxglove_bridge foxglove_bridge_launch.xml port:=8765"
 ```
 Connect Foxglove Studio to `ws://localhost:8765`.
 
-**Terminal 8: Send Navigation Goal (Docker exec)**
+**Terminal 9: Send Navigation Goal (Docker exec)**
 ```bash
 docker exec -it $(docker ps -q) bash -c "source /opt/ros/humble/setup.bash && ros2 action send_goal /navigate_to_pose nav2_msgs/action/NavigateToPose \"{pose: {header: {frame_id: 'map'}, pose: {position: {x: 0.0, y: -2.6, z: 0.0}, orientation: {w: 1.0}}}}\""
 ```
 
-### Linux (6 Terminals)
+### Linux (7 Terminals)
 
 **Terminal 1: Robot Driver**
 ```bash
@@ -287,17 +329,22 @@ ros2 run human_aware_nav human_detector
 ros2 run human_aware_nav kalman_tracker
 ```
 
-**Terminal 4: Nav2 Stack**
+**Terminal 4: Scan Filter**
+```bash
+ros2 run human_aware_nav scan_filter
+```
+
+**Terminal 5: Nav2 Stack**
 ```bash
 ros2 launch human_aware_nav nav2_launch.py
 ```
 
-**Terminal 5: Adaptive Safety**
+**Terminal 6: Adaptive Safety**
 ```bash
 ros2 run human_aware_nav adaptive_safety
 ```
 
-**Terminal 6: Send Navigation Goal**
+**Terminal 7: Send Navigation Goal**
 ```bash
 ros2 action send_goal /navigate_to_pose nav2_msgs/action/NavigateToPose "{pose: {header: {frame_id: 'map'}, pose: {position: {x: 0.0, y: -2.6, z: 0.0}, orientation: {w: 1.0}}}}"
 ```

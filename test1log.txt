@@ -1,0 +1,713 @@
+da_ya_pavl@dabl ~ % docker exec -it $(docker ps -q) bash -c "source /opt/ros/humble/setup.bash && source /ros2_ws/install/setup.bash && ros2 run human_aware_nav adaptive_safety"
+
+[INFO] [1765454369.634941256] [adaptive_safety]: adaptive safety started
+[INFO] [1765454396.179310088] [adaptive_safety]: SLOW: d=1.19 perp=0.76
+[INFO] [1765454396.229414088] [adaptive_safety]: SLOW: d=1.16 perp=0.73
+[INFO] [1765454396.279095463] [adaptive_safety]: SLOW: d=1.12 perp=0.71
+[INFO] [1765454396.329106421] [adaptive_safety]: SLOW: d=1.09 perp=0.70
+[INFO] [1765454396.379381171] [adaptive_safety]: SLOW: d=1.09 perp=0.70
+[INFO] [1765454396.429084880] [adaptive_safety]: SLOW: d=1.06 perp=0.65
+[INFO] [1765454396.478845380] [adaptive_safety]: SLOW: d=1.02 perp=0.63
+[INFO] [1765454396.529444255] [adaptive_safety]: SLOW: d=1.00 perp=0.60
+[INFO] [1765454396.578806421] [adaptive_safety]: SLOW: d=1.00 perp=0.60
+[INFO] [1765454396.629437463] [adaptive_safety]: SLOW: d=0.97 perp=0.55
+[INFO] [1765454396.679480421] [adaptive_safety]: SLOW: d=0.95 perp=0.55
+[INFO] [1765454396.729329713] [adaptive_safety]: SLOW: d=0.90 perp=0.55
+[INFO] [1765454396.778908421] [adaptive_safety]: SLOW: d=0.83 perp=0.55
+[INFO] [1765454396.829445380] [adaptive_safety]: SLOW: d=0.83 perp=0.55
+[INFO] [1765454396.879062130] [adaptive_safety]: SLOW: d=0.74 perp=0.55
+[INFO] [1765454397.979259380] [adaptive_safety]: SLOW: d=1.19 perp=0.76
+[INFO] [1765454398.029438880] [adaptive_safety]: SLOW: d=1.17 perp=0.76
+[INFO] [1765454398.079733005] [adaptive_safety]: SLOW: d=0.98 perp=0.66
+[INFO] [1765454398.128562964] [adaptive_safety]: SLOW: d=0.98 perp=0.66
+[INFO] [1765454398.179123880] [adaptive_safety]: SLOW: d=0.91 perp=0.61
+[INFO] [1765454398.229235672] [adaptive_safety]: SLOW: d=0.88 perp=0.61
+[INFO] [1765454398.279350839] [adaptive_safety]: SLOW: d=0.82 perp=0.48
+[INFO] [1765454398.329402297] [adaptive_safety]: SLOW: d=0.79 perp=0.48
+[INFO] [1765454398.378007547] [adaptive_safety]: SLOW: d=0.79 perp=0.48
+[INFO] [1765454398.427884089] [adaptive_safety]: SLOW: d=0.73 perp=0.48
+[INFO] [1765454398.479068422] [adaptive_safety]: CREEP: d=0.65 perp=0.48 - letting ped pass
+[INFO] [1765454398.528876172] [adaptive_safety]: CRITICAL-SLOW: d=0.56 perp=0.48
+[INFO] [1765454398.578021714] [adaptive_safety]: CRITICAL-SLOW: d=0.56 perp=0.48
+[INFO] [1765454398.629704297] [adaptive_safety]: SLOW: d=0.85 perp=0.73
+[INFO] [1765454398.679618131] [adaptive_safety]: SLOW: d=1.06 perp=0.73
+[INFO] [1765454398.729400297] [adaptive_safety]: EVADE-FWD(ahead): d=0.81 perp=0.26 t=1.3s
+[INFO] [1765454398.779271422] [adaptive_safety]: EVADE-FWD(ahead): d=0.78 perp=0.26 t=1.2s
+[INFO] [1765454398.828507964] [adaptive_safety]: EVADE-FWD(ahead): d=0.71 perp=0.26 t=1.1s
+[INFO] [1765454398.879579922] [adaptive_safety]: EVADE-FWD(ahead): d=0.71 perp=0.26 t=1.1s
+[ERROR] [1765454398.929533381] [adaptive_safety]: EMERGENCY-YIELD: d=0.44 perp=0.21 angle=58° (crossing)
+[ERROR] [1765454398.978929589] [adaptive_safety]: EMERGENCY-YIELD: d=0.39 perp=0.25 angle=60° (crossing)
+[ERROR] [1765454399.029658881] [adaptive_safety]: EMERGENCY-FWD: d=0.36 perp=0.29 angle=64°
+[ERROR] [1765454399.079231339] [adaptive_safety]: EMERGENCY-FWD: d=0.36 perp=0.29 angle=64°
+[ERROR] [1765454399.128922548] [adaptive_safety]: EMERGENCY-FWD: d=0.37 perp=0.29 angle=65°
+[ERROR] [1765454399.179058506] [adaptive_safety]: EMERGENCY-FWD: d=0.39 perp=0.29 angle=69°
+[ERROR] [1765454399.228980089] [adaptive_safety]: EMERGENCY-FWD: d=0.43 perp=0.29 angle=74°
+[ERROR] [1765454399.279131714] [adaptive_safety]: EMERGENCY-FWD: d=0.43 perp=0.29 angle=74°
+[INFO] [1765454399.329373089] [adaptive_safety]: EVADE-FWD(side): d=0.80 perp=0.42 angle=69°
+[INFO] [1765454399.379021256] [adaptive_safety]: EVADE-FWD(side): d=0.98 perp=0.48 angle=68°
+[INFO] [1765454399.428996673] [adaptive_safety]: EVADE-FWD(side): d=1.13 perp=0.49 angle=67°
+[INFO] [1765454399.479263089] [adaptive_safety]: EVADE-FWD(side): d=1.11 perp=0.52 angle=66°
+[INFO] [1765454399.529217464] [adaptive_safety]: EVADE-FWD(side): d=1.11 perp=0.52 angle=66°
+[INFO] [1765454399.579228881] [adaptive_safety]: EVADE-FWD(side): d=1.08 perp=0.54 angle=65°
+[INFO] [1765454399.629513340] [adaptive_safety]: EVADE-FWD(side): d=1.05 perp=0.54 angle=65°
+[INFO] [1765454399.679007840] [adaptive_safety]: EVADE-FWD(side): d=1.03 perp=0.54 angle=64°
+[INFO] [1765454399.728901298] [adaptive_safety]: EVADE-FWD(side): d=1.03 perp=0.54 angle=64°
+[INFO] [1765454399.779390131] [adaptive_safety]: EVADE-FWD(side): d=1.01 perp=0.54 angle=63°
+[INFO] [1765454399.829644006] [adaptive_safety]: EVADE-FWD(side): d=0.98 perp=0.54 angle=62°
+[INFO] [1765454399.879152798] [adaptive_safety]: EVADE-FWD(side): d=0.96 perp=0.50 angle=62°
+[INFO] [1765454399.929247506] [adaptive_safety]: EVADE-FWD(side): d=0.93 perp=0.48 angle=61°
+[INFO] [1765454399.980361215] [adaptive_safety]: EVADE-FWD(side): d=0.93 perp=0.48 angle=61°
+[INFO] [1765454400.028266340] [adaptive_safety]: EVADE-FWD(side): d=0.91 perp=0.46 angle=60°
+[INFO] [1765454400.079082673] [adaptive_safety]: EVADE-FWD(side): d=0.88 perp=0.43 angle=60°
+[INFO] [1765454400.128835256] [adaptive_safety]: EVADE-FWD(side): d=0.85 perp=0.41 angle=59°
+[INFO] [1765454400.179060798] [adaptive_safety]: EVADE-FWD(side): d=0.83 perp=0.40 angle=58°
+[INFO] [1765454400.231120256] [adaptive_safety]: EVADE-FWD(side): d=0.83 perp=0.40 angle=58°
+[INFO] [1765454400.278209298] [adaptive_safety]: EVADE-FWD(side): d=0.80 perp=0.36 angle=58°
+[INFO] [1765454400.328966090] [adaptive_safety]: EVADE-FWD(side): d=0.77 perp=0.31 angle=58°
+[INFO] [1765454400.379212882] [adaptive_safety]: EVADE-FWD(side): d=0.75 perp=0.28 angle=57°
+[INFO] [1765454400.428199548] [adaptive_safety]: EVADE-FWD(side): d=0.75 perp=0.28 angle=57°
+[INFO] [1765454400.479173090] [adaptive_safety]: EVADE-FWD(side): d=0.72 perp=0.24 angle=57°
+[INFO] [1765454400.529564632] [adaptive_safety]: EVADE-FWD(side): d=0.70 perp=0.22 angle=57°
+[INFO] [1765454400.579527590] [adaptive_safety]: EVADE-FWD(side): d=0.67 perp=0.19 angle=57°
+[INFO] [1765454400.628717298] [adaptive_safety]: EVADE-FWD(side): d=0.65 perp=0.15 angle=57°
+[INFO] [1765454400.679263757] [adaptive_safety]: EVADE-FWD(side): d=0.65 perp=0.15 angle=57°
+[INFO] [1765454400.729371548] [adaptive_safety]: EVADE-FWD(side): d=0.62 perp=0.12 angle=57°
+[WARN] [1765454400.779299465] [adaptive_safety]: CRITICAL-FWD(side): d=0.60 perp=0.08 angle=58°
+[WARN] [1765454400.829582423] [adaptive_safety]: CRITICAL-FWD(side): d=0.57 perp=0.04 angle=58°
+[WARN] [1765454400.879288465] [adaptive_safety]: CRITICAL-FWD(side): d=0.57 perp=0.04 angle=58°
+[WARN] [1765454400.931814965] [adaptive_safety]: CRITICAL-FWD(side): d=0.55 perp=0.00 angle=59°
+[WARN] [1765454400.978966173] [adaptive_safety]: CRITICAL-FWD(side): d=0.53 perp=0.07 angle=61°
+[WARN] [1765454401.028967340] [adaptive_safety]: CRITICAL-FWD(side): d=0.51 perp=0.15 angle=63°
+[WARN] [1765454401.079191132] [adaptive_safety]: CRITICAL-FWD(side): d=0.49 perp=0.22 angle=67°
+[WARN] [1765454401.129344965] [adaptive_safety]: CRITICAL-FWD(side): d=0.49 perp=0.22 angle=67°
+[WARN] [1765454401.179245674] [adaptive_safety]: CRITICAL-FWD(side): d=0.46 perp=0.27 angle=71°
+[ERROR] [1765454401.229715174] [adaptive_safety]: EMERGENCY-FWD: d=0.45 perp=0.32 angle=75°
+[ERROR] [1765454401.277842924] [adaptive_safety]: EMERGENCY-FWD: d=0.43 perp=0.34 angle=80°
+[ERROR] [1765454401.328025424] [adaptive_safety]: EMERGENCY-FWD: d=0.43 perp=0.34 angle=80°
+[ERROR] [1765454401.377948424] [adaptive_safety]: EMERGENCY-FWD: d=0.41 perp=0.36 angle=85°
+[ERROR] [1765454401.430230882] [adaptive_safety]: EMERGENCY-FWD: d=0.40 perp=0.37 angle=90°
+[ERROR] [1765454401.478976674] [adaptive_safety]: EMERGENCY-FWD: d=0.39 perp=0.38 angle=96°
+[ERROR] [1765454401.530938174] [adaptive_safety]: EMERGENCY-FWD: d=0.38 perp=0.38 angle=102°
+[ERROR] [1765454401.579950340] [adaptive_safety]: EMERGENCY-FWD: d=0.38 perp=0.38 angle=102°
+[ERROR] [1765454401.629328382] [adaptive_safety]: EMERGENCY-FWD: d=0.38 perp=0.38 angle=107°
+[ERROR] [1765454401.679555382] [adaptive_safety]: EMERGENCY-FWD: d=0.38 perp=0.38 angle=113°
+[ERROR] [1765454401.729074591] [adaptive_safety]: EMERGENCY-FWD: d=0.38 perp=0.38 angle=118°
+[ERROR] [1765454401.779225382] [adaptive_safety]: EMERGENCY-FWD: d=0.38 perp=0.38 angle=118°
+[INFO] [1765454401.829095257] [adaptive_safety]: EVADE-FWD(ahead): d=0.68 perp=0.32 t=1.7s
+[INFO] [1765454401.879027132] [adaptive_safety]: EVADE-FWD(ahead): d=0.95 perp=0.32 t=1.7s
+[INFO] [1765454401.929300007] [adaptive_safety]: EVADE-FWD(ahead): d=0.92 perp=0.33 t=1.6s
+[INFO] [1765454401.978907091] [adaptive_safety]: EVADE-FWD(ahead): d=0.89 perp=0.33 t=1.5s
+[INFO] [1765454402.028342591] [adaptive_safety]: EVADE-FWD(ahead): d=0.89 perp=0.33 t=1.5s
+[INFO] [1765454402.079228216] [adaptive_safety]: EVADE-FWD(ahead): d=0.85 perp=0.33 t=1.5s
+[INFO] [1765454402.129040799] [adaptive_safety]: EVADE-FWD(ahead): d=0.82 perp=0.34 t=1.4s
+[INFO] [1765454402.178710132] [adaptive_safety]: EVADE-FWD(ahead): d=0.79 perp=0.31 t=1.4s
+[INFO] [1765454402.230937924] [adaptive_safety]: EVADE-FWD(ahead): d=0.79 perp=0.31 t=1.4s
+[INFO] [1765454402.279107882] [adaptive_safety]: EVADE-FWD(ahead): d=0.76 perp=0.30 t=1.3s
+[INFO] [1765454402.329280007] [adaptive_safety]: EVADE-FWD(ahead): d=0.72 perp=0.28 t=1.3s
+[INFO] [1765454402.379499341] [adaptive_safety]: EVADE-FWD(ahead): d=0.70 perp=0.26 t=1.2s
+[INFO] [1765454402.428778216] [adaptive_safety]: EVADE-FWD(ahead): d=0.66 perp=0.24 t=1.2s
+[INFO] [1765454402.480700258] [adaptive_safety]: EVADE-FWD(ahead): d=0.66 perp=0.24 t=1.2s
+[INFO] [1765454402.531875549] [adaptive_safety]: EVADE-FWD(ahead): d=0.63 perp=0.22 t=1.2s
+[INFO] [1765454402.579054008] [adaptive_safety]: EVADE-FWD(ahead): d=0.60 perp=0.20 t=1.1s
+[WARN] [1765454402.629617008] [adaptive_safety]: CRITICAL-BACK: d=0.57 perp=0.17 angle=16°
+[WARN] [1765454402.679131091] [adaptive_safety]: CRITICAL-BACK: d=0.57 perp=0.17 angle=16°
+[WARN] [1765454402.729730924] [adaptive_safety]: CRITICAL-BACK: d=0.55 perp=0.16 angle=17°
+[WARN] [1765454402.779101091] [adaptive_safety]: CRITICAL-BACK: d=0.53 perp=0.13 angle=17°
+[WARN] [1765454402.829357966] [adaptive_safety]: CRITICAL-BACK: d=0.51 perp=0.12 angle=17°
+[WARN] [1765454402.879298299] [adaptive_safety]: CRITICAL-BACK: d=0.50 perp=0.10 angle=16°
+[WARN] [1765454402.929518633] [adaptive_safety]: CRITICAL-BACK: d=0.50 perp=0.10 angle=16°
+[WARN] [1765454402.979557174] [adaptive_safety]: CRITICAL-BACK: d=0.49 perp=0.07 angle=16°
+[WARN] [1765454403.029344883] [adaptive_safety]: CRITICAL-BACK: d=0.47 perp=0.07 angle=16°
+[ERROR] [1765454403.078882674] [adaptive_safety]: EMERGENCY-BACK: d=0.43 perp=0.07 angle=17° aimed=True
+[ERROR] [1765454403.128926175] [adaptive_safety]: EMERGENCY-BACK: d=0.43 perp=0.07 angle=17° aimed=True
+[ERROR] [1765454403.179175758] [adaptive_safety]: EMERGENCY-BACK: d=0.36 perp=0.07 angle=19° aimed=True
+[ERROR] [1765454403.229220633] [adaptive_safety]: EMERGENCY-BACK: d=0.27 perp=0.07 angle=23° aimed=True
+[INFO] [1765454403.429970175] [adaptive_safety]: SLOW: d=1.09 perp=1.09
+[INFO] [1765454403.678077883] [adaptive_safety]: SLOW: d=1.07 perp=1.07
+[INFO] [1765454403.729443633] [adaptive_safety]: SLOW: d=1.05 perp=1.03
+[INFO] [1765454403.778494883] [adaptive_safety]: SLOW: d=1.05 perp=1.03
+[INFO] [1765454403.829108883] [adaptive_safety]: SLOW: d=1.04 perp=1.03
+[INFO] [1765454403.879317675] [adaptive_safety]: SLOW: d=1.01 perp=0.92
+[INFO] [1765454403.928637675] [adaptive_safety]: SLOW: d=1.01 perp=0.92
+[INFO] [1765454403.979284258] [adaptive_safety]: SLOW: d=1.00 perp=0.92
+[INFO] [1765454404.029046508] [adaptive_safety]: SLOW: d=0.99 perp=0.92
+[INFO] [1765454404.078962925] [adaptive_safety]: SLOW: d=0.99 perp=0.92
+[INFO] [1765454404.128810342] [adaptive_safety]: SLOW: d=0.97 perp=0.92
+[INFO] [1765454404.179200383] [adaptive_safety]: CREEP: d=0.67 perp=0.37 - letting ped pass
+[ERROR] [1765454404.228768550] [adaptive_safety]: EMERGENCY-YIELD: d=0.38 perp=0.37 angle=32° (crossing)
+[ERROR] [1765454404.279001925] [adaptive_safety]: EMERGENCY-YIELD: d=0.38 perp=0.37 angle=32° (crossing)
+[ERROR] [1765454404.329206717] [adaptive_safety]: EMERGENCY-YIELD: d=0.38 perp=0.37 angle=35° (crossing)
+[ERROR] [1765454404.379230217] [adaptive_safety]: EMERGENCY-YIELD: d=0.38 perp=0.37 angle=37° (crossing)
+[ERROR] [1765454404.429504925] [adaptive_safety]: EMERGENCY-YIELD: d=0.39 perp=0.37 angle=40° (crossing)
+[ERROR] [1765454404.478830633] [adaptive_safety]: EMERGENCY-YIELD: d=0.39 perp=0.37 angle=40° (crossing)
+[ERROR] [1765454404.529773259] [adaptive_safety]: EMERGENCY-YIELD: d=0.40 perp=0.37 angle=44° (crossing)
+[ERROR] [1765454404.579398634] [adaptive_safety]: EMERGENCY-YIELD: d=0.42 perp=0.37 angle=49° (crossing)
+[INFO] [1765454405.279440967] [adaptive_safety]: EVADE-FWD(ahead): d=1.12 perp=0.12 t=8.4s
+[INFO] [1765454405.329593426] [adaptive_safety]: SLOW: d=1.00 perp=0.76
+[INFO] [1765454405.378945051] [adaptive_safety]: SLOW: d=0.95 perp=0.83
+[INFO] [1765454405.429320217] [adaptive_safety]: SLOW: d=0.95 perp=0.83
+[INFO] [1765454405.477989676] [adaptive_safety]: SLOW: d=0.92 perp=0.87
+[INFO] [1765454405.528925759] [adaptive_safety]: SLOW: d=0.91 perp=0.89
+[INFO] [1765454405.578695634] [adaptive_safety]: SLOW: d=0.91 perp=0.91
+[INFO] [1765454405.628658592] [adaptive_safety]: SLOW: d=0.92 perp=0.92
+[INFO] [1765454405.679199801] [adaptive_safety]: SLOW: d=0.92 perp=0.92
+[INFO] [1765454406.179112218] [adaptive_safety]: SLOW: d=1.16 perp=0.82
+[INFO] [1765454406.230117926] [adaptive_safety]: SLOW: d=1.16 perp=0.82
+[INFO] [1765454406.279214218] [adaptive_safety]: SLOW: d=1.14 perp=0.82
+[INFO] [1765454406.329560343] [adaptive_safety]: SLOW: d=1.14 perp=0.82
+[INFO] [1765454406.379594134] [adaptive_safety]: SLOW: d=1.13 perp=0.82
+[INFO] [1765454406.429987634] [adaptive_safety]: SLOW: d=1.10 perp=0.82
+[INFO] [1765454407.079003010] [adaptive_safety]: SLOW: d=1.03 perp=0.78
+[INFO] [1765454409.529444428] [adaptive_safety]: SLOW: d=0.70 perp=0.58
+[INFO] [1765454409.579317094] [adaptive_safety]: CREEP: d=0.70 perp=0.59 - letting ped pass
+[INFO] [1765454409.628778553] [adaptive_safety]: CREEP: d=0.69 perp=0.59 - letting ped pass
+[INFO] [1765454409.680302928] [adaptive_safety]: CREEP: d=0.69 perp=0.59 - letting ped pass
+[INFO] [1765454409.729745178] [adaptive_safety]: CREEP: d=0.69 perp=0.59 - letting ped pass
+[INFO] [1765454409.779733969] [adaptive_safety]: CREEP: d=0.68 perp=0.60 - letting ped pass
+[INFO] [1765454409.829933553] [adaptive_safety]: CREEP: d=0.68 perp=0.60 - letting ped pass
+[INFO] [1765454409.877606011] [adaptive_safety]: CREEP: d=0.67 perp=0.60 - letting ped pass
+[INFO] [1765454409.929610428] [adaptive_safety]: CREEP: d=0.67 perp=0.60 - letting ped pass
+[INFO] [1765454409.978991511] [adaptive_safety]: SLOW: d=0.92 perp=0.42
+[INFO] [1765454410.028909678] [adaptive_safety]: SLOW: d=1.15 perp=0.44
+[INFO] [1765454410.079414095] [adaptive_safety]: EVADE-FWD(side): d=0.99 perp=0.06 angle=56°
+[INFO] [1765454410.128631595] [adaptive_safety]: EVADE-FWD(side): d=0.80 perp=0.01 angle=56°
+[INFO] [1765454410.179040928] [adaptive_safety]: EVADE-FWD(side): d=0.80 perp=0.01 angle=56°
+[INFO] [1765454410.231807178] [adaptive_safety]: EVADE-FWD(side): d=0.76 perp=0.00 angle=56°
+[INFO] [1765454410.281376011] [adaptive_safety]: EVADE-FWD(side): d=0.73 perp=0.03 angle=56°
+[INFO] [1765454410.329766011] [adaptive_safety]: EVADE-FWD(side): d=0.69 perp=0.07 angle=57°
+[INFO] [1765454410.380321636] [adaptive_safety]: EVADE-FWD(side): d=0.69 perp=0.07 angle=57°
+[INFO] [1765454410.428835511] [adaptive_safety]: EVADE-FWD(side): d=0.65 perp=0.12 angle=58°
+[INFO] [1765454410.479320095] [adaptive_safety]: EVADE-FWD(side): d=0.62 perp=0.17 angle=60°
+[WARN] [1765454410.529073261] [adaptive_safety]: CRITICAL-FWD(side): d=0.58 perp=0.20 angle=62°
+[WARN] [1765454410.579446928] [adaptive_safety]: CRITICAL-FWD(side): d=0.55 perp=0.23 angle=64°
+[WARN] [1765454410.629542803] [adaptive_safety]: CRITICAL-FWD(side): d=0.55 perp=0.23 angle=64°
+[WARN] [1765454410.679922386] [adaptive_safety]: CRITICAL-FWD(side): d=0.51 perp=0.25 angle=67°
+[WARN] [1765454410.729397178] [adaptive_safety]: CRITICAL-FWD(side): d=0.47 perp=0.25 angle=69°
+[ERROR] [1765454410.779131678] [adaptive_safety]: EMERGENCY-FWD: d=0.44 perp=0.24 angle=72°
+[ERROR] [1765454410.829546137] [adaptive_safety]: EMERGENCY-FWD: d=0.44 perp=0.24 angle=72°
+[ERROR] [1765454410.879296428] [adaptive_safety]: EMERGENCY-FWD: d=0.40 perp=0.24 angle=75°
+[ERROR] [1765454410.929145220] [adaptive_safety]: EMERGENCY-FWD: d=0.37 perp=0.23 angle=78°
+[ERROR] [1765454410.979553595] [adaptive_safety]: EMERGENCY-FWD: d=0.34 perp=0.21 angle=81°
+[ERROR] [1765454411.028925512] [adaptive_safety]: EMERGENCY-FWD: d=0.30 perp=0.20 angle=84°
+[ERROR] [1765454411.078982928] [adaptive_safety]: EMERGENCY-FWD: d=0.30 perp=0.20 angle=84°
+[ERROR] [1765454411.129794012] [adaptive_safety]: EMERGENCY-FWD: d=0.27 perp=0.19 angle=88°
+[ERROR] [1765454411.179865178] [adaptive_safety]: EMERGENCY-FWD: d=0.24 perp=0.18 angle=92°
+[ERROR] [1765454411.229461137] [adaptive_safety]: EMERGENCY-FWD: d=0.21 perp=0.16 angle=98°
+[ERROR] [1765454411.279234053] [adaptive_safety]: EMERGENCY-FWD: d=0.21 perp=0.16 angle=98°
+[ERROR] [1765454411.329605220] [adaptive_safety]: EMERGENCY-FWD: d=0.18 perp=0.15 angle=104°
+[ERROR] [1765454411.379218303] [adaptive_safety]: EMERGENCY-FWD: d=0.16 perp=0.13 angle=111°
+[ERROR] [1765454411.429059178] [adaptive_safety]: EMERGENCY-FWD: d=0.13 perp=0.11 angle=113°
+[ERROR] [1765454411.479329470] [adaptive_safety]: EMERGENCY-FWD: d=0.12 perp=0.10 angle=117°
+[ERROR] [1765454411.529147720] [adaptive_safety]: EMERGENCY-FWD: d=0.12 perp=0.10 angle=117°
+[ERROR] [1765454411.579023220] [adaptive_safety]: EMERGENCY-BACK: d=0.34 perp=0.18 angle=40° aimed=True
+[WARN] [1765454411.629779179] [adaptive_safety]: CRITICAL-FWD(side): d=0.53 perp=0.17 angle=40°
+[WARN] [1765454411.679252970] [adaptive_safety]: CRITICAL-FWD(side): d=0.51 perp=0.15 angle=40°
+[WARN] [1765454411.728862012] [adaptive_safety]: CRITICAL-FWD(side): d=0.51 perp=0.15 angle=40°
+[WARN] [1765454411.778028137] [adaptive_safety]: CRITICAL-FWD(side): d=0.49 perp=0.13 angle=40°
+[WARN] [1765454411.828856845] [adaptive_safety]: CRITICAL-FWD(side): d=0.47 perp=0.10 angle=40°
+[WARN] [1765454411.879414804] [adaptive_safety]: CRITICAL-FWD(side): d=0.45 perp=0.10 angle=41°
+[WARN] [1765454411.928014262] [adaptive_safety]: CRITICAL-FWD(side): d=0.45 perp=0.10 angle=41°
+[ERROR] [1765454411.979373595] [adaptive_safety]: EMERGENCY-BACK: d=0.45 perp=0.17 angle=33° aimed=True
+[ERROR] [1765454412.029082720] [adaptive_safety]: EMERGENCY-BACK: d=0.44 perp=0.32 angle=27° aimed=True
+[ERROR] [1765454412.079350387] [adaptive_safety]: EMERGENCY-BACK: d=0.43 perp=0.36 angle=22° aimed=True
+[ERROR] [1765454412.129000720] [adaptive_safety]: EMERGENCY-BACK: d=0.43 perp=0.39 angle=19° aimed=True
+[ERROR] [1765454412.179189262] [adaptive_safety]: EMERGENCY-BACK: d=0.43 perp=0.39 angle=19° aimed=True
+[ERROR] [1765454412.229457637] [adaptive_safety]: EMERGENCY-BACK: d=0.43 perp=0.41 angle=16° aimed=True
+[ERROR] [1765454412.279385596] [adaptive_safety]: EMERGENCY-BACK: d=0.43 perp=0.41 angle=14° aimed=True
+[ERROR] [1765454412.329237137] [adaptive_safety]: EMERGENCY-YIELD: d=0.44 perp=0.44 angle=11° (crossing)
+[ERROR] [1765454412.378830929] [adaptive_safety]: EMERGENCY-YIELD: d=0.44 perp=0.44 angle=11° (crossing)
+[WARN] [1765454412.427774929] [adaptive_safety]: CRITICAL-FWD(side): d=0.47 perp=0.26 angle=74°
+[WARN] [1765454412.479014637] [adaptive_safety]: CRITICAL-FWD(side): d=0.50 perp=0.33 angle=72°
+[WARN] [1765454412.529457887] [adaptive_safety]: CRITICAL-FWD(side): d=0.52 perp=0.41 angle=68°
+[WARN] [1765454412.579278887] [adaptive_safety]: CRITICAL-FWD(side): d=0.54 perp=0.47 angle=65°
+[WARN] [1765454412.628900804] [adaptive_safety]: CRITICAL-FWD(side): d=0.54 perp=0.47 angle=65°
+[WARN] [1765454412.679415012] [adaptive_safety]: CRITICAL-FWD(side): d=0.56 perp=0.52 angle=64°
+[INFO] [1765454412.730005512] [adaptive_safety]: CRITICAL-SLOW: d=0.59 perp=0.56
+[INFO] [1765454412.779500512] [adaptive_safety]: CREEP: d=0.61 perp=0.60 - letting ped pass
+[INFO] [1765454412.828849929] [adaptive_safety]: SLOW: d=0.84 perp=1.04
+[INFO] [1765454412.879531638] [adaptive_safety]: SLOW: d=1.07 perp=1.04
+[INFO] [1765454412.930269096] [adaptive_safety]: SLOW: d=1.06 perp=1.03
+[INFO] [1765454412.979077221] [adaptive_safety]: SLOW: d=1.06 perp=1.03
+[INFO] [1765454413.028001054] [adaptive_safety]: SLOW: d=1.05 perp=1.03
+[INFO] [1765454413.079055721] [adaptive_safety]: SLOW: d=1.05 perp=1.03
+[INFO] [1765454413.129701721] [adaptive_safety]: SLOW: d=1.04 perp=1.04
+[INFO] [1765454413.178848388] [adaptive_safety]: SLOW: d=1.04 perp=1.04
+[INFO] [1765454414.479283972] [adaptive_safety]: EVADE-FWD(behind): d=0.68 perp=0.23 angle=101°
+[INFO] [1765454414.529569680] [adaptive_safety]: EVADE-FWD(behind): d=0.67 perp=0.23 angle=101°
+[INFO] [1765454414.578728138] [adaptive_safety]: EVADE-FWD(behind): d=0.64 perp=0.22 angle=100°
+[INFO] [1765454414.628678388] [adaptive_safety]: EVADE-FWD(behind): d=0.64 perp=0.22 angle=100°
+[INFO] [1765454414.679270638] [adaptive_safety]: EVADE-FWD(behind): d=0.64 perp=0.14 angle=101°
+[WARN] [1765454414.729469388] [adaptive_safety]: CRITICAL-FWD(behind): d=0.56 perp=0.11 angle=100°
+[WARN] [1765454414.779231055] [adaptive_safety]: CRITICAL-FWD(behind): d=0.54 perp=0.11 angle=99°
+[WARN] [1765454414.828955388] [adaptive_safety]: CRITICAL-FWD(behind): d=0.49 perp=0.02 angle=101°
+[WARN] [1765454414.878304138] [adaptive_safety]: CRITICAL-FWD(behind): d=0.49 perp=0.02 angle=101°
+[WARN] [1765454414.929817805] [adaptive_safety]: CRITICAL-FWD(behind): d=0.49 perp=0.06 angle=103°
+[WARN] [1765454414.979115555] [adaptive_safety]: CRITICAL-FWD(behind): d=0.48 perp=0.11 angle=105°
+[WARN] [1765454415.029438514] [adaptive_safety]: CRITICAL-FWD(behind): d=0.47 perp=0.17 angle=106°
+[WARN] [1765454415.079166764] [adaptive_safety]: CRITICAL-FWD(behind): d=0.47 perp=0.24 angle=108°
+[WARN] [1765454415.129941597] [adaptive_safety]: CRITICAL-FWD(behind): d=0.47 perp=0.24 angle=108°
+[WARN] [1765454415.179838680] [adaptive_safety]: CRITICAL-FWD(behind): d=0.48 perp=0.32 angle=110°
+[WARN] [1765454415.230515889] [adaptive_safety]: CRITICAL-FWD(behind): d=0.48 perp=0.40 angle=113°
+[WARN] [1765454415.280465889] [adaptive_safety]: CRITICAL-FWD(behind): d=0.49 perp=0.46 angle=115°
+[WARN] [1765454415.329756139] [adaptive_safety]: CRITICAL-FWD(behind): d=0.49 perp=0.46 angle=115°
+[WARN] [1765454415.379172639] [adaptive_safety]: CRITICAL-FWD(behind): d=0.50 perp=0.49 angle=117°
+[INFO] [1765454415.929473125] [adaptive_safety]: SLOW: d=1.20 perp=1.20
+[INFO] [1765454415.979227250] [adaptive_safety]: SLOW: d=1.20 perp=1.20
+[INFO] [1765454416.079200375] [adaptive_safety]: SLOW: d=0.76 perp=0.76
+[INFO] [1765454416.129017166] [adaptive_safety]: SLOW: d=0.75 perp=0.74
+[INFO] [1765454416.179710000] [adaptive_safety]: SLOW: d=0.75 perp=0.74
+[INFO] [1765454416.228501166] [adaptive_safety]: SLOW: d=0.75 perp=0.74
+[INFO] [1765454416.279206458] [adaptive_safety]: SLOW: d=0.74 perp=0.73
+[INFO] [1765454417.479733917] [adaptive_safety]: SLOW: d=1.19 perp=1.13
+[INFO] [1765454417.529655750] [adaptive_safety]: SLOW: d=1.18 perp=1.09
+[INFO] [1765454417.579207500] [adaptive_safety]: SLOW: d=1.18 perp=1.09
+[INFO] [1765454417.630285834] [adaptive_safety]: SLOW: d=1.17 perp=1.06
+[INFO] [1765454417.679291834] [adaptive_safety]: SLOW: d=1.16 perp=1.05
+[INFO] [1765454417.729759584] [adaptive_safety]: SLOW: d=1.15 perp=1.04
+[INFO] [1765454417.779176709] [adaptive_safety]: SLOW: d=1.15 perp=1.02
+[INFO] [1765454417.829546959] [adaptive_safety]: SLOW: d=1.15 perp=1.02
+[INFO] [1765454417.879175459] [adaptive_safety]: SLOW: d=1.14 perp=1.03
+[INFO] [1765454417.929460792] [adaptive_safety]: SLOW: d=1.14 perp=1.05
+[INFO] [1765454417.979282126] [adaptive_safety]: SLOW: d=1.14 perp=1.05
+[INFO] [1765454418.029251501] [adaptive_safety]: SLOW: d=1.14 perp=1.05
+[INFO] [1765454418.080124876] [adaptive_safety]: SLOW: d=1.13 perp=1.06
+[INFO] [1765454418.129205876] [adaptive_safety]: SLOW: d=1.13 perp=1.06
+[INFO] [1765454418.179541417] [adaptive_safety]: SLOW: d=1.12 perp=1.05
+[INFO] [1765454418.229624084] [adaptive_safety]: SLOW: d=1.12 perp=1.05
+[INFO] [1765454418.279691209] [adaptive_safety]: SLOW: d=1.12 perp=1.04
+[INFO] [1765454418.330043709] [adaptive_safety]: SLOW: d=1.11 perp=1.02
+[INFO] [1765454418.379876126] [adaptive_safety]: SLOW: d=1.11 perp=1.03
+[INFO] [1765454418.429301293] [adaptive_safety]: SLOW: d=1.10 perp=1.00
+[INFO] [1765454418.481924668] [adaptive_safety]: SLOW: d=1.10 perp=1.00
+[INFO] [1765454418.529271209] [adaptive_safety]: SLOW: d=1.10 perp=0.97
+[INFO] [1765454418.579269209] [adaptive_safety]: SLOW: d=1.10 perp=0.94
+[INFO] [1765454418.829829209] [adaptive_safety]: SLOW: d=1.19 perp=0.95
+[INFO] [1765454418.879096459] [adaptive_safety]: SLOW: d=1.17 perp=0.95
+[INFO] [1765454418.929552501] [adaptive_safety]: SLOW: d=1.15 perp=0.95
+[INFO] [1765454418.978356876] [adaptive_safety]: SLOW: d=1.15 perp=0.95
+[INFO] [1765454419.029822084] [adaptive_safety]: SLOW: d=1.11 perp=0.95
+[INFO] [1765454419.279380085] [adaptive_safety]: SLOW: d=1.03 perp=0.67
+[INFO] [1765454419.328082460] [adaptive_safety]: SLOW: d=1.02 perp=0.57
+[INFO] [1765454419.378652210] [adaptive_safety]: SLOW: d=1.02 perp=0.57
+[INFO] [1765454419.428370918] [adaptive_safety]: SLOW: d=1.01 perp=0.50
+[INFO] [1765454419.478942793] [adaptive_safety]: SLOW: d=1.00 perp=0.50
+[INFO] [1765454419.528607793] [adaptive_safety]: SLOW: d=0.99 perp=0.50
+[INFO] [1765454419.578564501] [adaptive_safety]: SLOW: d=0.99 perp=0.48
+[INFO] [1765454419.629394335] [adaptive_safety]: SLOW: d=0.99 perp=0.48
+[INFO] [1765454420.182393335] [adaptive_safety]: EVADE-FWD(ahead): d=0.93 perp=0.24 t=7.1s
+[INFO] [1765454420.230915335] [adaptive_safety]: EVADE-FWD(ahead): d=0.92 perp=0.24 t=6.8s
+[INFO] [1765454420.281516627] [adaptive_safety]: EVADE-FWD(ahead): d=0.92 perp=0.24 t=6.8s
+[INFO] [1765454420.332110085] [adaptive_safety]: EVADE-FWD(ahead): d=0.91 perp=0.30 t=6.2s
+[INFO] [1765454420.379610418] [adaptive_safety]: EVADE-FWD(ahead): d=0.90 perp=0.11 t=6.5s
+[INFO] [1765454420.430656877] [adaptive_safety]: EVADE-FWD(ahead): d=0.89 perp=0.08 t=6.6s
+[INFO] [1765454420.478754710] [adaptive_safety]: EVADE-FWD(ahead): d=0.89 perp=0.08 t=6.6s
+[INFO] [1765454420.530070169] [adaptive_safety]: EVADE-FWD(ahead): d=0.88 perp=0.33 t=5.7s
+[INFO] [1765454420.580462502] [adaptive_safety]: EVADE-FWD(ahead): d=0.87 perp=0.45 t=4.9s
+[INFO] [1765454420.629915585] [adaptive_safety]: SLOW: d=0.87 perp=0.64
+[INFO] [1765454420.679054210] [adaptive_safety]: SLOW: d=0.86 perp=0.71
+[INFO] [1765454420.732831169] [adaptive_safety]: SLOW: d=0.86 perp=0.71
+[INFO] [1765454420.779564085] [adaptive_safety]: SLOW: d=0.85 perp=0.76
+[INFO] [1765454420.829512127] [adaptive_safety]: SLOW: d=0.84 perp=0.78
+[INFO] [1765454420.879765544] [adaptive_safety]: SLOW: d=0.83 perp=0.78
+[INFO] [1765454420.931867502] [adaptive_safety]: SLOW: d=0.83 perp=0.78
+[INFO] [1765454420.980429669] [adaptive_safety]: SLOW: d=0.82 perp=0.77
+[INFO] [1765454421.029397669] [adaptive_safety]: SLOW: d=0.81 perp=0.75
+[INFO] [1765454421.079204335] [adaptive_safety]: SLOW: d=0.81 perp=0.73
+[INFO] [1765454421.130296127] [adaptive_safety]: SLOW: d=0.80 perp=0.70
+[INFO] [1765454421.178997835] [adaptive_safety]: SLOW: d=0.80 perp=0.70
+[INFO] [1765454421.230223586] [adaptive_safety]: SLOW: d=0.80 perp=0.54
+[INFO] [1765454421.431392711] [adaptive_safety]: SLOW: d=0.78 perp=0.49
+[INFO] [1765454421.479372419] [adaptive_safety]: SLOW: d=0.77 perp=0.62
+[INFO] [1765454421.529931544] [adaptive_safety]: SLOW: d=0.77 perp=0.69
+[INFO] [1765454421.579087336] [adaptive_safety]: SLOW: d=0.76 perp=0.71
+[INFO] [1765454421.628888544] [adaptive_safety]: SLOW: d=0.76 perp=0.71
+[INFO] [1765454421.679760377] [adaptive_safety]: SLOW: d=0.76 perp=0.73
+[INFO] [1765454421.729356419] [adaptive_safety]: SLOW: d=0.76 perp=0.74
+[INFO] [1765454421.778106336] [adaptive_safety]: SLOW: d=0.75 perp=0.75
+[INFO] [1765454421.829305169] [adaptive_safety]: SLOW: d=0.75 perp=0.75
+[INFO] [1765454421.879256127] [adaptive_safety]: SLOW: d=0.75 perp=0.75
+[INFO] [1765454421.929825211] [adaptive_safety]: SLOW: d=0.75 perp=0.75
+[INFO] [1765454421.979349878] [adaptive_safety]: SLOW: d=0.75 perp=0.75
+[INFO] [1765454422.028297628] [adaptive_safety]: SLOW: d=0.75 perp=0.75
+[INFO] [1765454422.079034169] [adaptive_safety]: SLOW: d=0.75 perp=0.75
+[INFO] [1765454422.129911294] [adaptive_safety]: SLOW: d=0.75 perp=0.75
+[INFO] [1765454422.179387294] [adaptive_safety]: SLOW: d=0.74 perp=0.74
+[INFO] [1765454422.629325711] [adaptive_safety]: SLOW: d=0.73 perp=0.73
+[INFO] [1765454422.678070211] [adaptive_safety]: SLOW: d=0.73 perp=0.73
+[INFO] [1765454422.729292920] [adaptive_safety]: SLOW: d=0.72 perp=0.72
+[INFO] [1765454422.779596545] [adaptive_safety]: SLOW: d=0.72 perp=0.72
+[INFO] [1765454422.828430670] [adaptive_safety]: SLOW: d=0.72 perp=0.71
+[INFO] [1765454422.879316503] [adaptive_safety]: SLOW: d=0.72 perp=0.71
+[INFO] [1765454422.929396461] [adaptive_safety]: SLOW: d=0.72 perp=0.71
+[INFO] [1765454422.977857295] [adaptive_safety]: SLOW: d=0.72 perp=0.71
+[INFO] [1765454423.029822670] [adaptive_safety]: SLOW: d=0.71 perp=0.71
+[INFO] [1765454423.079249170] [adaptive_safety]: SLOW: d=0.71 perp=0.70
+[INFO] [1765454423.129551461] [adaptive_safety]: SLOW: d=0.71 perp=0.71
+[INFO] [1765454423.179172336] [adaptive_safety]: SLOW: d=0.72 perp=0.72
+[INFO] [1765454423.230190753] [adaptive_safety]: SLOW: d=0.72 perp=0.72
+[INFO] [1765454423.279941295] [adaptive_safety]: SLOW: d=0.72 perp=0.72
+[INFO] [1765454423.330511795] [adaptive_safety]: SLOW: d=0.72 perp=0.72
+[INFO] [1765454423.379163670] [adaptive_safety]: SLOW: d=0.72 perp=0.71
+[INFO] [1765454423.829474837] [adaptive_safety]: SLOW: d=1.20 perp=0.99
+[INFO] [1765454423.878124003] [adaptive_safety]: SLOW: d=1.20 perp=0.99
+[INFO] [1765454423.979094670] [adaptive_safety]: SLOW: d=0.71 perp=0.70
+[INFO] [1765454424.029816129] [adaptive_safety]: SLOW: d=0.70 perp=0.70
+[INFO] [1765454424.079199587] [adaptive_safety]: SLOW: d=0.70 perp=0.70
+[INFO] [1765454424.129676212] [adaptive_safety]: SLOW: d=0.70 perp=0.70
+[INFO] [1765454424.179328337] [adaptive_safety]: SLOW: d=0.70 perp=0.70
+[INFO] [1765454424.229645254] [adaptive_safety]: SLOW: d=0.70 perp=0.70
+[INFO] [1765454424.279414420] [adaptive_safety]: SLOW: d=0.70 perp=0.70
+[INFO] [1765454424.331110962] [adaptive_safety]: SLOW: d=0.70 perp=0.70
+[INFO] [1765454424.379848754] [adaptive_safety]: SLOW: d=0.84 perp=0.60
+[INFO] [1765454424.429980045] [adaptive_safety]: SLOW: d=0.80 perp=0.57
+[INFO] [1765454424.478841087] [adaptive_safety]: SLOW: d=0.76 perp=0.52
+[INFO] [1765454424.529331004] [adaptive_safety]: SLOW: d=0.73 perp=0.48
+[INFO] [1765454424.579534129] [adaptive_safety]: SLOW: d=0.73 perp=0.48
+[INFO] [1765454424.629341087] [adaptive_safety]: CREEP: d=0.69 perp=0.43 - letting ped pass
+[INFO] [1765454424.679041754] [adaptive_safety]: CREEP: d=0.67 perp=0.38 - letting ped pass
+[INFO] [1765454424.729255921] [adaptive_safety]: EVADE-FWD(side): d=0.64 perp=0.33 angle=46°
+[INFO] [1765454424.778905462] [adaptive_safety]: EVADE-FWD(side): d=0.64 perp=0.33 angle=46°
+[INFO] [1765454424.829604796] [adaptive_safety]: EVADE-FWD(side): d=0.61 perp=0.29 angle=46°
+[WARN] [1765454424.879317754] [adaptive_safety]: CRITICAL-FWD(side): d=0.59 perp=0.27 angle=46°
+[WARN] [1765454424.929219046] [adaptive_safety]: CRITICAL-FWD(side): d=0.56 perp=0.25 angle=45°
+[WARN] [1765454424.979269921] [adaptive_safety]: CRITICAL-FWD(side): d=0.54 perp=0.23 angle=44°
+[WARN] [1765454425.029887421] [adaptive_safety]: CRITICAL-FWD(side): d=0.54 perp=0.23 angle=44°
+[WARN] [1765454425.081567754] [adaptive_safety]: CRITICAL-FWD(side): d=0.52 perp=0.21 angle=44°
+[WARN] [1765454425.129265004] [adaptive_safety]: CRITICAL-FWD(side): d=0.49 perp=0.19 angle=43°
+[WARN] [1765454425.179763921] [adaptive_safety]: CRITICAL-FWD(side): d=0.47 perp=0.18 angle=42°
+[WARN] [1765454425.229717587] [adaptive_safety]: CRITICAL-FWD(side): d=0.47 perp=0.18 angle=42°
+[ERROR] [1765454425.279181379] [adaptive_safety]: EMERGENCY-BACK: d=0.44 perp=0.17 angle=41° aimed=True
+[ERROR] [1765454425.330153421] [adaptive_safety]: EMERGENCY-BACK: d=0.42 perp=0.16 angle=40° aimed=True
+[ERROR] [1765454425.380245462] [adaptive_safety]: EMERGENCY-BACK: d=0.40 perp=0.16 angle=39° aimed=True
+[ERROR] [1765454425.428476338] [adaptive_safety]: EMERGENCY-BACK: d=0.40 perp=0.16 angle=39° aimed=True
+[ERROR] [1765454425.481060838] [adaptive_safety]: EMERGENCY-BACK: d=0.38 perp=0.15 angle=39° aimed=True
+[ERROR] [1765454425.528968421] [adaptive_safety]: EMERGENCY-BACK: d=0.36 perp=0.14 angle=38° aimed=True
+[ERROR] [1765454425.577809796] [adaptive_safety]: EMERGENCY-BACK: d=0.35 perp=0.14 angle=37° aimed=True
+[ERROR] [1765454425.629239463] [adaptive_safety]: EMERGENCY-BACK: d=0.33 perp=0.13 angle=36° aimed=True
+[ERROR] [1765454425.679115254] [adaptive_safety]: EMERGENCY-BACK: d=0.32 perp=0.14 angle=35° aimed=True
+[ERROR] [1765454425.729249254] [adaptive_safety]: EMERGENCY-BACK: d=0.32 perp=0.14 angle=35° aimed=True
+[ERROR] [1765454425.778247713] [adaptive_safety]: EMERGENCY-BACK: d=0.31 perp=0.15 angle=33° aimed=True
+[ERROR] [1765454425.829388838] [adaptive_safety]: EMERGENCY-BACK: d=0.30 perp=0.15 angle=32° aimed=True
+[ERROR] [1765454425.879998171] [adaptive_safety]: EMERGENCY-BACK: d=0.29 perp=0.16 angle=30° aimed=True
+[ERROR] [1765454425.929657171] [adaptive_safety]: EMERGENCY-BACK: d=0.29 perp=0.16 angle=30° aimed=True
+[ERROR] [1765454425.979181254] [adaptive_safety]: EMERGENCY-BACK: d=0.28 perp=0.17 angle=28° aimed=True
+[ERROR] [1765454426.029080796] [adaptive_safety]: EMERGENCY-BACK: d=0.28 perp=0.19 angle=26° aimed=True
+[ERROR] [1765454426.078733963] [adaptive_safety]: EMERGENCY-BACK: d=0.27 perp=0.20 angle=24° aimed=True
+[ERROR] [1765454426.128646921] [adaptive_safety]: EMERGENCY-BACK: d=0.27 perp=0.22 angle=21° aimed=True
+[ERROR] [1765454426.180600630] [adaptive_safety]: EMERGENCY-BACK: d=0.27 perp=0.22 angle=21° aimed=True
+[ERROR] [1765454426.229729088] [adaptive_safety]: EMERGENCY-BACK: d=0.27 perp=0.24 angle=18° aimed=True
+[ERROR] [1765454426.279530838] [adaptive_safety]: EMERGENCY-BACK: d=0.27 perp=0.25 angle=16° aimed=True
+[ERROR] [1765454426.327740088] [adaptive_safety]: EMERGENCY-BACK: d=0.27 perp=0.26 angle=13° aimed=True
+[ERROR] [1765454426.379566755] [adaptive_safety]: EMERGENCY-BACK: d=0.27 perp=0.26 angle=13° aimed=True
+[ERROR] [1765454426.429550880] [adaptive_safety]: EMERGENCY-YIELD: d=0.28 perp=0.28 angle=11° (crossing)
+[ERROR] [1765454426.479509838] [adaptive_safety]: EMERGENCY-YIELD: d=0.29 perp=0.29 angle=9° (crossing)
+[ERROR] [1765454426.529535505] [adaptive_safety]: EMERGENCY-YIELD: d=0.30 perp=0.29 angle=6° (crossing)
+[ERROR] [1765454426.578173796] [adaptive_safety]: EMERGENCY-YIELD: d=0.30 perp=0.29 angle=3° (crossing)
+[ERROR] [1765454426.629373338] [adaptive_safety]: EMERGENCY-YIELD: d=0.30 perp=0.29 angle=3° (crossing)
+[ERROR] [1765454426.679432005] [adaptive_safety]: EMERGENCY-YIELD: d=0.31 perp=0.29 angle=0° (crossing)
+[ERROR] [1765454426.729308338] [adaptive_safety]: EMERGENCY-YIELD: d=0.31 perp=0.29 angle=3° (crossing)
+[ERROR] [1765454426.779209421] [adaptive_safety]: EMERGENCY-YIELD: d=0.32 perp=0.29 angle=7° (crossing)
+[ERROR] [1765454426.829764297] [adaptive_safety]: EMERGENCY-YIELD: d=0.32 perp=0.29 angle=7° (crossing)
+[ERROR] [1765454426.879257213] [adaptive_safety]: EMERGENCY-YIELD: d=0.32 perp=0.29 angle=11° (crossing)
+[ERROR] [1765454426.929885755] [adaptive_safety]: EMERGENCY-YIELD: d=0.33 perp=0.30 angle=14° (crossing)
+[ERROR] [1765454426.978611088] [adaptive_safety]: EMERGENCY-YIELD: d=0.33 perp=0.30 angle=14° (crossing)
+[ERROR] [1765454427.029425255] [adaptive_safety]: EMERGENCY-YIELD: d=0.34 perp=0.30 angle=17° (crossing)
+[ERROR] [1765454427.079563838] [adaptive_safety]: EMERGENCY-YIELD: d=0.35 perp=0.30 angle=20° (crossing)
+[ERROR] [1765454427.129450213] [adaptive_safety]: EMERGENCY-YIELD: d=0.36 perp=0.30 angle=23° (crossing)
+[ERROR] [1765454427.179300672] [adaptive_safety]: EMERGENCY-YIELD: d=0.37 perp=0.30 angle=26° (crossing)
+[ERROR] [1765454427.229097213] [adaptive_safety]: EMERGENCY-YIELD: d=0.38 perp=0.30 angle=29° (crossing)
+[ERROR] [1765454427.279377422] [adaptive_safety]: EMERGENCY-YIELD: d=0.38 perp=0.30 angle=29° (crossing)
+[ERROR] [1765454427.329678297] [adaptive_safety]: EMERGENCY-YIELD: d=0.40 perp=0.30 angle=31° (crossing)
+[ERROR] [1765454427.379350380] [adaptive_safety]: EMERGENCY-YIELD: d=0.41 perp=0.30 angle=34° (crossing)
+[ERROR] [1765454427.429457172] [adaptive_safety]: EMERGENCY-YIELD: d=0.42 perp=0.30 angle=36° (crossing)
+[ERROR] [1765454427.479126005] [adaptive_safety]: EMERGENCY-YIELD: d=0.42 perp=0.30 angle=36° (crossing)
+[ERROR] [1765454427.529864297] [adaptive_safety]: EMERGENCY-YIELD: d=0.44 perp=0.30 angle=38° (crossing)
+[INFO] [1765454427.579078380] [adaptive_safety]: CREEP: d=0.68 perp=0.68 - letting ped pass
+[INFO] [1765454427.629296839] [adaptive_safety]: CREEP: d=0.68 perp=0.68 - letting ped pass
+[INFO] [1765454427.678542255] [adaptive_safety]: CREEP: d=0.68 perp=0.68 - letting ped pass
+[INFO] [1765454427.729838297] [adaptive_safety]: SLOW: d=0.92 perp=1.16
+[INFO] [1765454427.779235339] [adaptive_safety]: SLOW: d=1.15 perp=1.15
+[INFO] [1765454427.829333714] [adaptive_safety]: EVADE-FWD(behind): d=1.00 perp=0.30 angle=100°
+[INFO] [1765454427.879370547] [adaptive_safety]: EVADE-FWD(behind): d=0.83 perp=0.13 angle=100°
+[INFO] [1765454427.931735589] [adaptive_safety]: EVADE-FWD(behind): d=0.83 perp=0.13 angle=100°
+[INFO] [1765454427.979548380] [adaptive_safety]: EVADE-FWD(behind): d=0.81 perp=0.13 angle=99°
+[INFO] [1765454428.029229047] [adaptive_safety]: EVADE-FWD(behind): d=0.80 perp=0.33 angle=97°
+[INFO] [1765454428.079200672] [adaptive_safety]: SLOW: d=0.81 perp=0.79
+[INFO] [1765454428.129510547] [adaptive_safety]: SLOW: d=0.81 perp=0.79
+[INFO] [1765454428.278961631] [adaptive_safety]: SLOW: d=1.11 perp=0.42
+[INFO] [1765454428.329196672] [adaptive_safety]: SLOW: d=0.95 perp=0.42
+[INFO] [1765454428.378966631] [adaptive_safety]: SLOW: d=0.95 perp=0.42
+[INFO] [1765454428.929677131] [adaptive_safety]: CRITICAL-SLOW: d=0.49 perp=0.38
+[INFO] [1765454428.979142464] [adaptive_safety]: CRITICAL-SLOW: d=0.48 perp=0.38
+[INFO] [1765454429.028356256] [adaptive_safety]: CRITICAL-SLOW: d=0.48 perp=0.38
+[INFO] [1765454429.078117673] [adaptive_safety]: CRITICAL-SLOW: d=0.46 perp=0.38
+[ERROR] [1765454429.129578756] [adaptive_safety]: EMERGENCY-FWD: d=0.43 perp=0.38 angle=140°
+[ERROR] [1765454429.179407881] [adaptive_safety]: EMERGENCY-FWD: d=0.39 perp=0.37 angle=151°
+[ERROR] [1765454429.228233381] [adaptive_safety]: EMERGENCY-FWD: d=0.38 perp=0.37 angle=154°
+[ERROR] [1765454429.279412714] [adaptive_safety]: EMERGENCY-FWD: d=0.38 perp=0.37 angle=154°
+[ERROR] [1765454429.329336464] [adaptive_safety]: EMERGENCY-FWD: d=0.37 perp=0.37 angle=160°
+[INFO] [1765454429.378917173] [adaptive_safety]: EVADE-FWD(behind): d=0.70 perp=0.42 angle=125°
+[INFO] [1765454429.429153089] [adaptive_safety]: EVADE-FWD(behind): d=0.86 perp=0.14 angle=121°
+[INFO] [1765454429.479542089] [adaptive_safety]: EVADE-FWD(behind): d=1.02 perp=0.14 angle=121°
+[INFO] [1765454429.529215964] [adaptive_safety]: SLOW: d=1.15 perp=1.05
+[INFO] [1765454429.580625673] [adaptive_safety]: EVADE-FWD(behind): d=1.13 perp=0.17 angle=119°
+[INFO] [1765454429.631503631] [adaptive_safety]: SLOW: d=1.20 perp=1.18
+[INFO] [1765454429.679367173] [adaptive_safety]: SLOW: d=1.20 perp=1.18
+[INFO] [1765454429.977942715] [adaptive_safety]: EVADE-FWD(behind): d=0.81 perp=0.17 angle=101°
+[WARN] [1765454430.031666298] [adaptive_safety]: CRITICAL-FWD(side): d=0.58 perp=0.19 angle=59°
+[WARN] [1765454430.079320006] [adaptive_safety]: CRITICAL-FWD(side): d=0.55 perp=0.14 angle=59°
+[WARN] [1765454430.129914340] [adaptive_safety]: CRITICAL-FWD(side): d=0.55 perp=0.14 angle=59°
+[WARN] [1765454430.178218006] [adaptive_safety]: CRITICAL-FWD(side): d=0.53 perp=0.15 angle=58°
+[WARN] [1765454430.229725798] [adaptive_safety]: CRITICAL-FWD(side): d=0.50 perp=0.18 angle=57°
+[WARN] [1765454430.279314673] [adaptive_safety]: CRITICAL-FWD(side): d=0.48 perp=0.19 angle=55°
+[WARN] [1765454430.329451590] [adaptive_safety]: CRITICAL-FWD(side): d=0.45 perp=0.21 angle=53°
+[WARN] [1765454430.379621007] [adaptive_safety]: CRITICAL-FWD(side): d=0.45 perp=0.21 angle=53°
+[ERROR] [1765454430.429699423] [adaptive_safety]: EMERGENCY-BACK: d=0.43 perp=0.23 angle=51° aimed=True
+[ERROR] [1765454430.479158882] [adaptive_safety]: EMERGENCY-BACK: d=0.41 perp=0.24 angle=48° aimed=True
+[ERROR] [1765454430.529722257] [adaptive_safety]: EMERGENCY-BACK: d=0.39 perp=0.25 angle=45° aimed=True
+[ERROR] [1765454430.580544923] [adaptive_safety]: EMERGENCY-BACK: d=0.39 perp=0.25 angle=45° aimed=True
+[ERROR] [1765454430.629530757] [adaptive_safety]: EMERGENCY-BACK: d=0.37 perp=0.25 angle=42° aimed=True
+[ERROR] [1765454430.679683673] [adaptive_safety]: EMERGENCY-BACK: d=0.35 perp=0.26 angle=39° aimed=True
+[ERROR] [1765454430.729856673] [adaptive_safety]: EMERGENCY-BACK: d=0.33 perp=0.25 angle=35° aimed=True
+[ERROR] [1765454430.779183132] [adaptive_safety]: EMERGENCY-BACK: d=0.32 perp=0.25 angle=32° aimed=True
+[ERROR] [1765454430.829885590] [adaptive_safety]: EMERGENCY-BACK: d=0.32 perp=0.25 angle=32° aimed=True
+[ERROR] [1765454430.878307465] [adaptive_safety]: EMERGENCY-BACK: d=0.31 perp=0.26 angle=29° aimed=True
+[ERROR] [1765454430.929542715] [adaptive_safety]: EMERGENCY-BACK: d=0.31 perp=0.27 angle=26° aimed=True
+[ERROR] [1765454430.978914298] [adaptive_safety]: EMERGENCY-BACK: d=0.31 perp=0.29 angle=23° aimed=True
+[ERROR] [1765454431.030212549] [adaptive_safety]: EMERGENCY-BACK: d=0.31 perp=0.29 angle=23° aimed=True
+[ERROR] [1765454431.081126799] [adaptive_safety]: EMERGENCY-BACK: d=0.31 perp=0.30 angle=21° aimed=True
+[ERROR] [1765454431.129396965] [adaptive_safety]: EMERGENCY-YIELD: d=0.32 perp=0.31 angle=19° (crossing)
+[ERROR] [1765454431.178347299] [adaptive_safety]: EMERGENCY-YIELD: d=0.33 perp=0.33 angle=16° (crossing)
+[ERROR] [1765454431.228987507] [adaptive_safety]: EMERGENCY-FWD: d=0.32 perp=0.07 angle=109°
+[ERROR] [1765454431.279164549] [adaptive_safety]: EMERGENCY-FWD: d=0.32 perp=0.07 angle=109°
+[ERROR] [1765454431.329706549] [adaptive_safety]: EMERGENCY-FWD: d=0.29 perp=0.06 angle=109°
+[ERROR] [1765454431.379592132] [adaptive_safety]: EMERGENCY-FWD: d=0.26 perp=0.05 angle=110°
+[ERROR] [1765454431.429531549] [adaptive_safety]: EMERGENCY-FWD: d=0.24 perp=0.04 angle=110°
+[ERROR] [1765454431.479428340] [adaptive_safety]: EMERGENCY-FWD: d=0.24 perp=0.04 angle=110°
+[ERROR] [1765454431.529601382] [adaptive_safety]: EMERGENCY-FWD: d=0.21 perp=0.03 angle=110°
+[ERROR] [1765454431.579605049] [adaptive_safety]: EMERGENCY-FWD: d=0.19 perp=0.03 angle=111°
+[ERROR] [1765454431.629610340] [adaptive_safety]: EMERGENCY-FWD: d=0.17 perp=0.03 angle=112°
+[ERROR] [1765454431.679408465] [adaptive_safety]: EMERGENCY-FWD: d=0.17 perp=0.03 angle=112°
+[ERROR] [1765454431.729873882] [adaptive_safety]: EMERGENCY-FWD: d=0.15 perp=0.03 angle=113°
+[ERROR] [1765454431.779369924] [adaptive_safety]: EMERGENCY-FWD: d=0.13 perp=0.00 angle=109°
+[ERROR] [1765454431.829385966] [adaptive_safety]: EMERGENCY-FWD: d=0.12 perp=0.01 angle=105°
+[ERROR] [1765454431.879203674] [adaptive_safety]: EMERGENCY-YIELD: d=0.38 perp=0.35 angle=18° (crossing)
+[ERROR] [1765454431.928240757] [adaptive_safety]: EMERGENCY-YIELD: d=0.38 perp=0.35 angle=18° (crossing)
+[ERROR] [1765454431.979167549] [adaptive_safety]: EMERGENCY-YIELD: d=0.38 perp=0.35 angle=22° (crossing)
+[ERROR] [1765454432.029360216] [adaptive_safety]: EMERGENCY-YIELD: d=0.38 perp=0.35 angle=27° (crossing)
+[ERROR] [1765454432.079415549] [adaptive_safety]: EMERGENCY-YIELD: d=0.39 perp=0.35 angle=31° (crossing)
+[ERROR] [1765454432.128809132] [adaptive_safety]: EMERGENCY-YIELD: d=0.39 perp=0.35 angle=31° (crossing)
+[ERROR] [1765454432.180440507] [adaptive_safety]: EMERGENCY-YIELD: d=0.40 perp=0.35 angle=34° (crossing)
+[ERROR] [1765454432.229763299] [adaptive_safety]: EMERGENCY-YIELD: d=0.41 perp=0.35 angle=36° (crossing)
+[ERROR] [1765454432.279561174] [adaptive_safety]: EMERGENCY-YIELD: d=0.43 perp=0.35 angle=37° (crossing)
+[ERROR] [1765454432.329400216] [adaptive_safety]: EMERGENCY-YIELD: d=0.44 perp=0.34 angle=39° (crossing)
+[ERROR] [1765454432.379376632] [adaptive_safety]: EMERGENCY-YIELD: d=0.44 perp=0.34 angle=39° (crossing)
+[INFO] [1765454432.428133924] [adaptive_safety]: EVADE-FWD(side): d=0.72 perp=0.37 angle=56°
+[INFO] [1765454432.480976758] [adaptive_safety]: EVADE-FWD(side): d=0.72 perp=0.11 angle=54°
+[INFO] [1765454432.529111133] [adaptive_safety]: EVADE-FWD(side): d=0.71 perp=0.32 angle=51°
+[INFO] [1765454432.579154508] [adaptive_safety]: EVADE-FWD(side): d=0.70 perp=0.47 angle=49°
+[INFO] [1765454432.630086299] [adaptive_safety]: EVADE-FWD(side): d=0.70 perp=0.47 angle=49°
+[INFO] [1765454432.679384883] [adaptive_safety]: EVADE-FWD(side): d=0.69 perp=0.49 angle=48°
+[INFO] [1765454432.729471091] [adaptive_safety]: EVADE-FWD(side): d=0.68 perp=0.46 angle=48°
+[INFO] [1765454432.779267799] [adaptive_safety]: EVADE-FWD(side): d=0.68 perp=0.46 angle=48°
+[INFO] [1765454432.829814466] [adaptive_safety]: EVADE-FWD(side): d=0.66 perp=0.40 angle=47°
+[INFO] [1765454432.880377508] [adaptive_safety]: EVADE-FWD(side): d=0.65 perp=0.27 angle=48°
+[INFO] [1765454432.929472174] [adaptive_safety]: EVADE-FWD(side): d=0.63 perp=0.10 angle=50°
+[INFO] [1765454432.979633008] [adaptive_safety]: EVADE-FWD(side): d=0.61 perp=0.03 angle=51°
+[WARN] [1765454433.029547383] [adaptive_safety]: CRITICAL-FWD(side): d=0.59 perp=0.11 angle=52°
+[WARN] [1765454433.079216799] [adaptive_safety]: CRITICAL-FWD(side): d=0.59 perp=0.11 angle=52°
+[ERROR] [1765454433.129184800] [adaptive_safety]: EMERGENCY-FWD: d=0.37 perp=0.02 angle=118°
+[WARN] [1765454433.179995300] [adaptive_safety]: CRITICAL-FWD(side): d=0.56 perp=0.24 angle=55°
+[WARN] [1765454433.228553800] [adaptive_safety]: CRITICAL-FWD(side): d=0.54 perp=0.29 angle=57°
+[WARN] [1765454433.279850175] [adaptive_safety]: CRITICAL-FWD(side): d=0.54 perp=0.29 angle=57°
+[WARN] [1765454433.329862550] [adaptive_safety]: CRITICAL-FWD(side): d=0.53 perp=0.31 angle=59°
+[WARN] [1765454433.379407675] [adaptive_safety]: CRITICAL-FWD(side): d=0.51 perp=0.33 angle=61°
+[WARN] [1765454433.429466175] [adaptive_safety]: CRITICAL-FWD(side): d=0.50 perp=0.34 angle=63°
+[WARN] [1765454433.479268675] [adaptive_safety]: CRITICAL-FWD(side): d=0.50 perp=0.34 angle=63°
+[WARN] [1765454433.530112425] [adaptive_safety]: CRITICAL-FWD(side): d=0.48 perp=0.34 angle=65°
+[WARN] [1765454433.579642550] [adaptive_safety]: CRITICAL-FWD(side): d=0.47 perp=0.35 angle=67°
+[WARN] [1765454433.629484175] [adaptive_safety]: CRITICAL-FWD(side): d=0.45 perp=0.36 angle=69°
+[ERROR] [1765454433.679249758] [adaptive_safety]: EMERGENCY-FWD: d=0.44 perp=0.36 angle=72°
+[ERROR] [1765454433.729224175] [adaptive_safety]: EMERGENCY-FWD: d=0.44 perp=0.36 angle=72°
+[ERROR] [1765454433.783358883] [adaptive_safety]: EMERGENCY-FWD: d=0.42 perp=0.36 angle=75°
+[ERROR] [1765454433.829487300] [adaptive_safety]: EMERGENCY-FWD: d=0.41 perp=0.37 angle=79°
+[ERROR] [1765454433.879353258] [adaptive_safety]: EMERGENCY-FWD: d=0.40 perp=0.36 angle=82°
+[ERROR] [1765454433.929281300] [adaptive_safety]: EMERGENCY-FWD: d=0.40 perp=0.36 angle=82°
+[ERROR] [1765454433.978488592] [adaptive_safety]: EMERGENCY-FWD: d=0.39 perp=0.36 angle=86°
+[ERROR] [1765454434.029279717] [adaptive_safety]: EMERGENCY-FWD: d=0.38 perp=0.35 angle=88°
+[ERROR] [1765454434.079252133] [adaptive_safety]: EMERGENCY-FWD: d=0.37 perp=0.34 angle=88°
+[ERROR] [1765454434.129195717] [adaptive_safety]: EMERGENCY-FWD: d=0.36 perp=0.33 angle=88°
+[ERROR] [1765454434.180062258] [adaptive_safety]: EMERGENCY-FWD: d=0.36 perp=0.33 angle=88°
+[ERROR] [1765454434.229526008] [adaptive_safety]: EMERGENCY-FWD: d=0.36 perp=0.31 angle=88°
+[ERROR] [1765454434.279198842] [adaptive_safety]: EMERGENCY-FWD: d=0.35 perp=0.30 angle=89°
+[ERROR] [1765454434.328877675] [adaptive_safety]: EMERGENCY-FWD: d=0.34 perp=0.29 angle=89°
+[ERROR] [1765454434.379436842] [adaptive_safety]: EMERGENCY-FWD: d=0.33 perp=0.28 angle=91°
+[ERROR] [1765454434.429633008] [adaptive_safety]: EMERGENCY-FWD: d=0.33 perp=0.28 angle=91°
+[ERROR] [1765454434.479008717] [adaptive_safety]: EMERGENCY-FWD: d=0.32 perp=0.27 angle=92°
+[ERROR] [1765454434.529420259] [adaptive_safety]: EMERGENCY-FWD: d=0.32 perp=0.27 angle=93°
+[ERROR] [1765454434.582853800] [adaptive_safety]: EMERGENCY-FWD: d=0.32 perp=0.27 angle=93°
+[ERROR] [1765454434.629518800] [adaptive_safety]: EMERGENCY-FWD: d=0.32 perp=0.26 angle=94°
+[ERROR] [1765454434.679350425] [adaptive_safety]: EMERGENCY-FWD: d=0.31 perp=0.25 angle=94°
+[ERROR] [1765454434.729585342] [adaptive_safety]: EMERGENCY-FWD: d=0.30 perp=0.24 angle=95°
+[ERROR] [1765454434.779447384] [adaptive_safety]: EMERGENCY-FWD: d=0.29 perp=0.23 angle=97°
+[ERROR] [1765454434.829174842] [adaptive_safety]: EMERGENCY-FWD: d=0.29 perp=0.23 angle=97°
+[ERROR] [1765454434.879196050] [adaptive_safety]: EMERGENCY-FWD: d=0.28 perp=0.18 angle=95°
+[ERROR] [1765454434.929680384] [adaptive_safety]: EMERGENCY-FWD: d=0.28 perp=0.18 angle=96°
+[ERROR] [1765454434.979469425] [adaptive_safety]: EMERGENCY-FWD: d=0.27 perp=0.12 angle=95°
+[ERROR] [1765454435.029391175] [adaptive_safety]: EMERGENCY-FWD: d=0.27 perp=0.12 angle=95°
+[INFO] [1765454436.779196801] [adaptive_safety]: SLOW: d=1.18 perp=0.69
+[INFO] [1765454436.830853760] [adaptive_safety]: SLOW: d=1.18 perp=0.69
+[INFO] [1765454436.879344718] [adaptive_safety]: EVADE-FWD(behind): d=1.14 perp=0.25 angle=105°
+[INFO] [1765454436.929534176] [adaptive_safety]: EVADE-FWD(behind): d=1.13 perp=0.00 angle=103°
+[INFO] [1765454436.979454510] [adaptive_safety]: EVADE-FWD(behind): d=1.13 perp=0.44 angle=106°
+[INFO] [1765454437.028710843] [adaptive_safety]: EVADE-FWD(behind): d=1.13 perp=0.44 angle=106°
+[INFO] [1765454437.079560718] [adaptive_safety]: SLOW: d=1.17 perp=0.75
+[INFO] [1765454437.129384593] [adaptive_safety]: SLOW: d=1.16 perp=0.75
+[INFO] [1765454437.179421635] [adaptive_safety]: SLOW: d=1.15 perp=0.75
+[INFO] [1765454437.229359968] [adaptive_safety]: SLOW: d=1.13 perp=0.75
+[INFO] [1765454437.278691218] [adaptive_safety]: SLOW: d=1.13 perp=0.75
+[INFO] [1765454437.329818093] [adaptive_safety]: SLOW: d=1.10 perp=0.75
+[ERROR] [1765454437.779479427] [adaptive_safety]: EMERGENCY-FWD: d=0.18 perp=0.18 angle=94°
+[ERROR] [1765454437.830527677] [adaptive_safety]: EMERGENCY-FWD: d=0.18 perp=0.17 angle=83°
+[ERROR] [1765454437.879328010] [adaptive_safety]: EMERGENCY-FWD: d=0.18 perp=0.17 angle=76°
+[ERROR] [1765454437.928293677] [adaptive_safety]: EMERGENCY-FWD: d=0.18 perp=0.17 angle=76°
+[ERROR] [1765454437.978700843] [adaptive_safety]: EMERGENCY-FWD: d=0.17 perp=0.17 angle=71°
+[ERROR] [1765454438.029498260] [adaptive_safety]: EMERGENCY-FWD: d=0.17 perp=0.16 angle=70°
+[ERROR] [1765454438.079465844] [adaptive_safety]: EMERGENCY-FWD: d=0.17 perp=0.16 angle=71°
+[ERROR] [1765454438.728653344] [adaptive_safety]: EMERGENCY-FWD: d=0.14 perp=0.14 angle=107°
+[ERROR] [1765454438.779600219] [adaptive_safety]: EMERGENCY-FWD: d=0.13 perp=0.13 angle=116°
+[ERROR] [1765454439.680199136] [adaptive_safety]: EMERGENCY-YIELD: d=0.12 perp=0.05 angle=15° (crossing)
+[ERROR] [1765454439.728319136] [adaptive_safety]: EMERGENCY-YIELD: d=0.16 perp=0.05 angle=14° (crossing)
+[ERROR] [1765454439.780575344] [adaptive_safety]: EMERGENCY-YIELD: d=0.16 perp=0.05 angle=14° (crossing)
+[ERROR] [1765454439.829616636] [adaptive_safety]: EMERGENCY-YIELD: d=0.19 perp=0.05 angle=13° (crossing)
+[ERROR] [1765454439.880167803] [adaptive_safety]: EMERGENCY-YIELD: d=0.22 perp=0.05 angle=14° (crossing)
+[ERROR] [1765454439.929229303] [adaptive_safety]: EMERGENCY-YIELD: d=0.23 perp=0.05 angle=15° (crossing)
+[ERROR] [1765454439.978540219] [adaptive_safety]: EMERGENCY-YIELD: d=0.24 perp=0.05 angle=15° (crossing)
+[ERROR] [1765454440.029171136] [adaptive_safety]: EMERGENCY-YIELD: d=0.24 perp=0.05 angle=15° (crossing)
+[ERROR] [1765454440.079242678] [adaptive_safety]: EMERGENCY-YIELD: d=0.24 perp=0.05 angle=14° (crossing)
+[ERROR] [1765454440.129434053] [adaptive_safety]: EMERGENCY-YIELD: d=0.25 perp=0.05 angle=14° (crossing)
+[ERROR] [1765454440.179284178] [adaptive_safety]: EMERGENCY-YIELD: d=0.25 perp=0.05 angle=14° (crossing)
+[ERROR] [1765454440.230316553] [adaptive_safety]: EMERGENCY-YIELD: d=0.25 perp=0.05 angle=14° (crossing)
+[ERROR] [1765454440.279773220] [adaptive_safety]: EMERGENCY-YIELD: d=0.24 perp=0.05 angle=14° (crossing)
+[ERROR] [1765454440.330099595] [adaptive_safety]: EMERGENCY-YIELD: d=0.25 perp=0.06 angle=13° (crossing)
+[ERROR] [1765454440.380065761] [adaptive_safety]: EMERGENCY-YIELD: d=0.25 perp=0.07 angle=12° (crossing)
+[ERROR] [1765454440.829689970] [adaptive_safety]: EMERGENCY-YIELD: d=0.29 perp=0.02 angle=15° (crossing)
+[ERROR] [1765454440.879094345] [adaptive_safety]: EMERGENCY-YIELD: d=0.30 perp=0.05 angle=16° (crossing)
+[ERROR] [1765454440.929838887] [adaptive_safety]: EMERGENCY-YIELD: d=0.30 perp=0.05 angle=16° (crossing)
+[ERROR] [1765454440.980226803] [adaptive_safety]: EMERGENCY-YIELD: d=0.31 perp=0.07 angle=17° (crossing)
+[ERROR] [1765454441.029268720] [adaptive_safety]: EMERGENCY-YIELD: d=0.32 perp=0.08 angle=19° (crossing)
+[ERROR] [1765454441.079313762] [adaptive_safety]: EMERGENCY-YIELD: d=0.33 perp=0.07 angle=18° (crossing)
+[ERROR] [1765454441.130216428] [adaptive_safety]: EMERGENCY-YIELD: d=0.33 perp=0.07 angle=18° (crossing)
+[ERROR] [1765454441.179180387] [adaptive_safety]: EMERGENCY-YIELD: d=0.33 perp=0.09 angle=19° (crossing)
+[ERROR] [1765454441.729836345] [adaptive_safety]: EMERGENCY-YIELD: d=0.36 perp=0.24 angle=28° (crossing)
+[ERROR] [1765454441.779395429] [adaptive_safety]: EMERGENCY-YIELD: d=0.36 perp=0.24 angle=28° (crossing)
+[ERROR] [1765454441.829708762] [adaptive_safety]: EMERGENCY-YIELD: d=0.37 perp=0.27 angle=31° (crossing)
+[ERROR] [1765454441.879220179] [adaptive_safety]: EMERGENCY-YIELD: d=0.39 perp=0.27 angle=33° (crossing)
+[ERROR] [1765454441.929591929] [adaptive_safety]: EMERGENCY-YIELD: d=0.40 perp=0.28 angle=35° (crossing)
+[ERROR] [1765454441.979827804] [adaptive_safety]: EMERGENCY-YIELD: d=0.41 perp=0.26 angle=35° (crossing)
+[ERROR] [1765454442.029813679] [adaptive_safety]: EMERGENCY-YIELD: d=0.41 perp=0.26 angle=35° (crossing)
+[ERROR] [1765454442.080492012] [adaptive_safety]: EMERGENCY-YIELD: d=0.42 perp=0.25 angle=35° (crossing)
+[ERROR] [1765454442.129175595] [adaptive_safety]: EMERGENCY-YIELD: d=0.42 perp=0.24 angle=35° (crossing)
+[ERROR] [1765454442.179633929] [adaptive_safety]: EMERGENCY-YIELD: d=0.42 perp=0.24 angle=35° (crossing)
+[ERROR] [1765454442.229251971] [adaptive_safety]: EMERGENCY-YIELD: d=0.42 perp=0.24 angle=35° (crossing)
+[INFO] [1765454442.279819429] [adaptive_safety]: EVADE-FWD(ahead): d=0.70 perp=0.35 t=2.2s
+[INFO] [1765454442.329358137] [adaptive_safety]: EVADE-FWD(ahead): d=0.95 perp=0.35 t=2.1s
+[INFO] [1765454442.379907762] [adaptive_safety]: EVADE-FWD(ahead): d=0.90 perp=0.35 t=2.0s
+[INFO] [1765454442.429112262] [adaptive_safety]: EVADE-FWD(ahead): d=0.90 perp=0.17 t=3.3s
+[INFO] [1765454442.482535221] [adaptive_safety]: EVADE-FWD(ahead): d=0.90 perp=0.17 t=3.3s
+[INFO] [1765454442.529942096] [adaptive_safety]: EVADE-FWD(ahead): d=0.88 perp=0.17 t=3.2s
+[INFO] [1765454442.579457762] [adaptive_safety]: EVADE-FWD(ahead): d=0.85 perp=0.17 t=3.1s
+[INFO] [1765454442.629281262] [adaptive_safety]: EVADE-FWD(ahead): d=0.80 perp=0.17 t=2.9s
+[INFO] [1765454442.681872221] [adaptive_safety]: EVADE-FWD(ahead): d=0.80 perp=0.17 t=2.9s
+[INFO] [1765454442.729299887] [adaptive_safety]: EVADE-FWD(ahead): d=0.73 perp=0.17 t=2.7s
+[INFO] [1765454443.181066679] [adaptive_safety]: SLOW: d=1.15 perp=1.02
+[INFO] [1765454443.229302221] [adaptive_safety]: SLOW: d=1.15 perp=0.99
+[INFO] [1765454443.278944554] [adaptive_safety]: SLOW: d=1.06 perp=0.96
+[INFO] [1765454443.328128846] [adaptive_safety]: SLOW: d=0.91 perp=0.83
+[INFO] [1765454443.382141596] [adaptive_safety]: SLOW: d=0.91 perp=0.83
+[INFO] [1765454443.429340263] [adaptive_safety]: SLOW: d=0.82 perp=0.77
+[INFO] [1765454443.480416638] [adaptive_safety]: SLOW: d=0.87 perp=0.83
+[INFO] [1765454443.529321513] [adaptive_safety]: SLOW: d=0.89 perp=0.87
+[INFO] [1765454443.578055680] [adaptive_safety]: SLOW: d=0.89 perp=0.87
+[INFO] [1765454443.630183596] [adaptive_safety]: SLOW: d=0.89 perp=0.87
+[INFO] [1765454443.680278596] [adaptive_safety]: SLOW: d=0.87 perp=0.85
+[INFO] [1765454443.729684596] [adaptive_safety]: SLOW: d=0.85 perp=0.83
+[INFO] [1765454443.779069638] [adaptive_safety]: SLOW: d=0.82 perp=0.80
+[INFO] [1765454443.829363305] [adaptive_safety]: SLOW: d=0.82 perp=0.80
+[INFO] [1765454443.879666555] [adaptive_safety]: SLOW: d=0.79 perp=0.77
+[INFO] [1765454443.929620221] [adaptive_safety]: SLOW: d=0.78 perp=0.77
+[INFO] [1765454443.979468680] [adaptive_safety]: SLOW: d=0.74 perp=0.73
+[INFO] [1765454444.029560680] [adaptive_safety]: SLOW: d=0.71 perp=0.71
+[INFO] [1765454444.079880221] [adaptive_safety]: SLOW: d=0.71 perp=0.71
+[INFO] [1765454444.129299763] [adaptive_safety]: SLOW: d=0.70 perp=0.70
+[INFO] [1765454444.179550846] [adaptive_safety]: CRITICAL-SLOW: d=0.47 perp=0.43
+[INFO] [1765454444.229063846] [adaptive_safety]: CRITICAL-SLOW: d=0.46 perp=0.42
+[INFO] [1765454444.281803347] [adaptive_safety]: CRITICAL-SLOW: d=0.46 perp=0.42
+[INFO] [1765454444.329868305] [adaptive_safety]: CRITICAL-SLOW: d=0.46 perp=0.42
+[INFO] [1765454444.379965472] [adaptive_safety]: CRITICAL-SLOW: d=0.45 perp=0.42
+[ERROR] [1765454444.429690513] [adaptive_safety]: EMERGENCY-YIELD: d=0.45 perp=0.42 angle=37° (crossing)
+[ERROR] [1765454444.479541097] [adaptive_safety]: EMERGENCY-YIELD: d=0.44 perp=0.42 angle=41° (crossing)
+[ERROR] [1765454444.531474930] [adaptive_safety]: EMERGENCY-YIELD: d=0.44 perp=0.42 angle=41° (crossing)
+[WARN] [1765454444.580155013] [adaptive_safety]: CRITICAL-YIELD: d=0.53 perp=0.52 angle=25° (crossing)
+[WARN] [1765454444.629765055] [adaptive_safety]: CRITICAL-YIELD: d=0.56 perp=0.55 angle=30° (crossing)
+[INFO] [1765454444.679011263] [adaptive_safety]: CRITICAL-SLOW: d=0.58 perp=0.58
+[INFO] [1765454444.731287972] [adaptive_safety]: CRITICAL-SLOW: d=0.58 perp=0.58
+[INFO] [1765454444.879935222] [adaptive_safety]: SLOW: d=1.02 perp=0.36
+[INFO] [1765454444.929078888] [adaptive_safety]: SLOW: d=1.02 perp=0.36
+[INFO] [1765454444.979308514] [adaptive_safety]: SLOW: d=1.10 perp=0.61
+[INFO] [1765454445.030150222] [adaptive_safety]: EVADE-FWD(side): d=1.03 perp=0.13 angle=44°
+[INFO] [1765454445.079551764] [adaptive_safety]: EVADE-FWD(side): d=1.01 perp=0.13 angle=44°
+[INFO] [1765454445.128091472] [adaptive_safety]: EVADE-FWD(ahead): d=0.79 perp=0.49 t=2.2s
+[WARN] [1765454445.179331597] [adaptive_safety]: CRITICAL-BACK: d=0.55 perp=0.51 angle=30°
+[WARN] [1765454445.230317222] [adaptive_safety]: CRITICAL-BACK: d=0.55 perp=0.51 angle=30°
+[WARN] [1765454445.278515680] [adaptive_safety]: CRITICAL-BACK: d=0.53 perp=0.49 angle=27°
+[WARN] [1765454445.329538889] [adaptive_safety]: CRITICAL-BACK: d=0.52 perp=0.49 angle=25°
+[WARN] [1765454445.379292805] [adaptive_safety]: CRITICAL-BACK: d=0.52 perp=0.37 angle=29°
+[WARN] [1765454445.430219180] [adaptive_safety]: CRITICAL-BACK: d=0.52 perp=0.37 angle=29°
+[WARN] [1765454445.479956514] [adaptive_safety]: CRITICAL-BACK: d=0.51 perp=0.22 angle=31°
+[WARN] [1765454445.579580055] [adaptive_safety]: CRITICAL-BACK: d=0.50 perp=0.24 angle=36°
+[WARN] [1765454445.629618083] [adaptive_safety]: CRITICAL-BACK: d=0.49 perp=0.32 angle=38°
+[WARN] [1765454445.678931208] [adaptive_safety]: CRITICAL-BACK: d=0.49 perp=0.32 angle=38°
+[WARN] [1765454445.729216041] [adaptive_safety]: CRITICAL-FWD(side): d=0.48 perp=0.36 angle=41°
+[WARN] [1765454445.779398250] [adaptive_safety]: CRITICAL-FWD(side): d=0.47 perp=0.38 angle=43°
+[WARN] [1765454445.829568500] [adaptive_safety]: CRITICAL-FWD(side): d=0.46 perp=0.40 angle=45°
+[WARN] [1765454445.879690708] [adaptive_safety]: CRITICAL-FWD(side): d=0.46 perp=0.40 angle=45°
+[WARN] [1765454445.930073458] [adaptive_safety]: CRITICAL-FWD(side): d=0.46 perp=0.42 angle=47°
+[WARN] [1765454445.979293333] [adaptive_safety]: CRITICAL-FWD(side): d=0.46 perp=0.44 angle=49°
+[WARN] [1765454446.028061166] [adaptive_safety]: CRITICAL-FWD(side): d=0.46 perp=0.45 angle=51°
+[WARN] [1765454446.078142958] [adaptive_safety]: CRITICAL-FWD(side): d=0.46 perp=0.45 angle=51°
+[WARN] [1765454446.129128625] [adaptive_safety]: CRITICAL-FWD(side): d=0.46 perp=0.45 angle=53°
+[WARN] [1765454446.178452000] [adaptive_safety]: CRITICAL-FWD(side): d=0.46 perp=0.46 angle=54°
+[WARN] [1765454446.229503583] [adaptive_safety]: CRITICAL-FWD(side): d=0.46 perp=0.46 angle=56°
+[WARN] [1765454446.279158708] [adaptive_safety]: CRITICAL-FWD(side): d=0.46 perp=0.45 angle=59°
+[WARN] [1765454446.329706792] [adaptive_safety]: CRITICAL-FWD(side): d=0.46 perp=0.45 angle=59°
+[WARN] [1765454446.379498708] [adaptive_safety]: CRITICAL-FWD(side): d=0.45 perp=0.45 angle=61°
+[INFO] [1765454446.429224333] [adaptive_safety]: EVADE-FWD(side): d=0.75 perp=0.45 angle=56°
+[INFO] [1765454446.479175875] [adaptive_safety]: EVADE-FWD(side): d=0.97 perp=0.45 angle=53°
+[INFO] [1765454446.529634083] [adaptive_safety]: EVADE-FWD(side): d=0.97 perp=0.45 angle=53°
+[INFO] [1765454446.578835833] [adaptive_safety]: EVADE-FWD(side): d=0.87 perp=0.45 angle=50°
+[INFO] [1765454446.629283667] [adaptive_safety]: SLOW: d=1.17 perp=0.99
+[INFO] [1765454446.679037625] [adaptive_safety]: SLOW: d=1.16 perp=0.98
+[INFO] [1765454446.729240292] [adaptive_safety]: SLOW: d=1.16 perp=1.02
+[INFO] [1765454446.779882917] [adaptive_safety]: SLOW: d=1.16 perp=1.02
+[INFO] [1765454446.829366375] [adaptive_safety]: SLOW: d=1.15 perp=1.04
+[INFO] [1765454446.879564417] [adaptive_safety]: SLOW: d=1.15 perp=1.04
+[INFO] [1765454446.929418958] [adaptive_safety]: SLOW: d=1.14 perp=1.03
+[INFO] [1765454446.979404542] [adaptive_safety]: SLOW: d=1.14 perp=1.03
+[INFO] [1765454447.029433584] [adaptive_safety]: SLOW: d=1.14 perp=1.03
+[INFO] [1765454447.079256417] [adaptive_safety]: SLOW: d=1.15 perp=1.03
+[INFO] [1765454447.280284459] [adaptive_safety]: SLOW: d=1.18 perp=0.61
+[INFO] [1765454447.329146167] [adaptive_safety]: SLOW: d=1.11 perp=0.46
+[INFO] [1765454447.379253584] [adaptive_safety]: SLOW: d=1.05 perp=0.36
+[INFO] [1765454447.428892000] [adaptive_safety]: SLOW: d=1.05 perp=0.36
+[INFO] [1765454447.479998250] [adaptive_safety]: EVADE-FWD(side): d=1.00 perp=0.35 angle=57°
+[INFO] [1765454447.529187834] [adaptive_safety]: SLOW: d=1.04 perp=0.74
+[INFO] [1765454447.580184334] [adaptive_safety]: SLOW: d=1.00 perp=0.71
+[INFO] [1765454447.628986334] [adaptive_safety]: SLOW: d=0.98 perp=0.71
+[INFO] [1765454447.679884417] [adaptive_safety]: SLOW: d=0.98 perp=0.71
+[INFO] [1765454447.729629084] [adaptive_safety]: SLOW: d=0.92 perp=0.50
+[INFO] [1765454447.779430876] [adaptive_safety]: SLOW: d=0.91 perp=0.67
+[INFO] [1765454447.830183834] [adaptive_safety]: SLOW: d=0.95 perp=0.84
+[INFO] [1765454447.879093084] [adaptive_safety]: SLOW: d=0.99 perp=0.96
+[INFO] [1765454447.928553751] [adaptive_safety]: SLOW: d=0.99 perp=0.96
+

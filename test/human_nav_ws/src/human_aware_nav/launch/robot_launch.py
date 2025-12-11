@@ -10,12 +10,19 @@ from webots_ros2_driver.webots_controller import WebotsController
 
 def generate_launch_description():
     package_name = 'human_aware_nav'
-    
+
+    # launch argument to select world file (default: human_env.wbt, use human_env_static.wbt for SLAM)
+    world_arg = DeclareLaunchArgument(
+        'world',
+        default_value='human_env.wbt',
+        description='World file to load (human_env.wbt or human_env_static.wbt)'
+    )
+
     # 1. 查找世界文件
     world_file = PathJoinSubstitution([
         get_package_share_directory(package_name),
         'worlds',
-        'human_env.wbt'
+        LaunchConfiguration('world')
     ])
 
     # 2. 配置 Webots 启动器
@@ -42,6 +49,7 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
+        world_arg,
         webots,
         my_robot_driver,
         launch.actions.RegisterEventHandler(

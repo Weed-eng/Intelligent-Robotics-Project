@@ -95,7 +95,7 @@ class AdaptiveSafety(Node):
         self.last_safe_vx = 0.0
         self.last_safe_wz = 0.0
 
-        self.get_logger().info('Adaptive safety v8.5: continuous jitter fixes')
+        self.get_logger().info('adaptive safety started')
 
     def odom_callback(self, msg):
         self.robot_vx = msg.twist.twist.linear.x
