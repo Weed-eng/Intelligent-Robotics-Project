@@ -120,6 +120,7 @@ Controls: `i` = forward, `k` = stop, `j` = turn left, `l` = turn right, `,` = ba
 ## SLAM Mapping Mode
 
 Create a new map of the environment. Use the static world (no pedestrians) for clean mapping.
+Note: We use slam_toolbox, the built-in ROS 2 SLAM package, rather than developing a SLAM algorithm from scratch.
 
 ### macOS
 
